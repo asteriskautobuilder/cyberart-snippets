@@ -1,0 +1,7 @@
+{
+  "id": "glade-cyber-snow-render",
+  "name": "Glade Cyber Snow Render",
+  "description": "Render cyberpunk gradient skyline with glowing falling snowflakes",
+  "phase": "render",
+  "code": "var ctx = drawingContext;\nvar w = dimensionContext.width;\nvar h = dimensionContext.height;\nvar g = ctx.createLinearGradient(0, 0, 0, h);\ng.addColorStop(0, '#050816');\ng.addColorStop(0.45, '#140a2b');\ng.addColorStop(1, '#08131f');\nctx.fillStyle = g;\nctx.fillRect(0, 0, w, h);\nctx.fillStyle = 'rgba(20,255,220,0.08)';\nfor (var i = 0; i < 24; i++) {\n  var bw = 22 + (i % 5) * 8;\n  var bh = 40 + (i % 7) * 22;\n  var bx = (i * (w / 24));\n  ctx.fillRect(bx, h - bh, bw, bh);\n}\nvar flakes = state.flakes;\nif (!flakes) return;\nctx.save();\nctx.globalCompositeOperation = 'lighter';\nfor (var j = 0; j < flakes.length; j++) {\n  var f = flakes[j];\n  var pulse = 0.75 + 0.25 * Math.sin(framesElapsed * 0.04 + f.phase);\n  var a = f.alpha * pulse;\n  var r = f.size * 4;\n  var glow = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);\n  glow.addColorStop(0, 'hsla(' + Math.floor(f.hue) + ',100%,80%,' + (a * 0.95).toFixed(3) + ')');\n  glow.addColorStop(0.35, 'hsla(' + Math.floor(f.hue) + ',100%,65%,' + (a * 0.35).toFixed(3) + ')');\n  glow.addColorStop(1, 'hsla(' + Math.floor(f.hue) + ',100%,55%,0)');\n  ctx.fillStyle = glow;\n  ctx.fillRect(f.x - r, f.y - r, r * 2, r * 2);\n  ctx.beginPath();\n  ctx.arc(f.x, f.y, f.size * 0.7, 0, Math.PI * 2);\n  ctx.fillStyle = 'rgba(230,245,255,' + (a * 0.9).toFixed(3) + ')';\n  ctx.fill();\n}\nctx.restore();"
+}

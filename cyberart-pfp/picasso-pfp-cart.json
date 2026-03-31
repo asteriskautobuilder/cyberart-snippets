@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps",
+  "name": "Picasso Cubist PFPs",
+  "description": "Static cubist face portraits with colorful cubism-inspired palettes",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render", "version": 1 }
+  ]
+}

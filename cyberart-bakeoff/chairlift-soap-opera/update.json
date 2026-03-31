@@ -1,0 +1,7 @@
+{
+  "id": "glade-chairlift-soap-update",
+  "name": "Glade Chairlift Soap Update",
+  "description": "Advance lift time and swap scenes",
+  "phase": "update",
+  "code": "(function(){state.t=(state.t||0)+1;var t=state.t||0;var chairs=state.chairs||[];for(var i=0;i<chairs.length;i++){var ch=chairs[i];ch.u=(ch.u+0.0008)%1; if(t%600===0){ch.scene=(ch.scene+1)%4;} ch.phase+=0.03;}state.chairs=chairs;return state;})();"
+}

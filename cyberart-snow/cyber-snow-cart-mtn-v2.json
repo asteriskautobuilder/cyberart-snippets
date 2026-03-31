@@ -1,0 +1,11 @@
+{
+  "id": "glade-cyberpunk-snowfall-mountains-v2",
+  "name": "Glade Cyberpunk Snowfall — Mountains v2",
+  "description": "Neon snowfall with snow-capped mountains, moon, river foreground, and pines",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-cyber-snow-init", "version": 1 },
+    { "moduleId": "glade-cyber-snow-update", "version": 1 },
+    { "moduleId": "glade-cyber-snow-render-mtn-v2", "version": 1 }
+  ]
+}

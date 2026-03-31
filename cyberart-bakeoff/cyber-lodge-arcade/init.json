@@ -1,0 +1,7 @@
+{
+  "id": "glade-cyber-lodge-arcade-init",
+  "name": "Glade Cyber Lodge Arcade Init",
+  "description": "Initialize arcade cabinet + player state",
+  "phase": "getDefaultState",
+  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;return Object.assign({},state,{t:0,agents:[{x:w*0.32,y:h*0.68,skin:'G'},{x:w*0.68,y:h*0.68,skin:'M'}],screens:[{x:w*0.30,y:h*0.40,game:'FLAP'},{x:w*0.70,y:h*0.40,game:'CHK'}]});})();"
+}

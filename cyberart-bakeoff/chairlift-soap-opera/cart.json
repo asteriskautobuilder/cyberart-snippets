@@ -1,0 +1,20 @@
+{
+  "id": "glade-chairlift-soap-opera",
+  "name": "Chairlift Soap Opera",
+  "description": "Looping night chairlift with tiny drama scenes on each chair.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-chairlift-soap-init",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-chairlift-soap-update",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-chairlift-soap-render",
+      "version": 1
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-clear-bg",
+  "name": "Glade Clear BG",
+  "description": "Clear canvas",
+  "phase": "render",
+  "code": "drawingContext.fillStyle='rgba(5,8,16,1)';drawingContext.fillRect(0,0,dimensionContext.width,dimensionContext.height);"
+}

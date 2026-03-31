@@ -1,0 +1,7 @@
+{
+  "id": "glade-mecha-santa-render",
+  "name": "Glade Mecha Santa Render",
+  "description": "Render mecha Santa sleigh with thruster trail",
+  "phase": "render",
+  "code": "var ms = state.mechaSanta || { t: 0, bobPhase: 0 }; var w = dimensionContext.width; var h = dimensionContext.height; var sx = w * (1.08 - ms.t * 1.32); var sy = h * 0.18 + Math.sin(ms.bobPhase) * (h * 0.016); var ctx = drawingContext; ctx.save(); ctx.translate(sx, sy); ctx.scale(1.2, 1.2); ctx.strokeStyle = 'rgba(90,255,235,0.62)'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(22, 2); ctx.lineTo(42 + Math.sin(framesElapsed * 0.14) * 7, 2); ctx.stroke(); ctx.fillStyle = 'rgba(120,130,160,0.96)'; ctx.fillRect(-18, -4, 30, 11); ctx.strokeStyle = 'rgba(230,90,255,0.72)'; ctx.lineWidth = 1.2; ctx.strokeRect(-18, -4, 30, 11); ctx.beginPath(); ctx.moveTo(-18, 8); ctx.quadraticCurveTo(-4, 13, 14, 8); ctx.strokeStyle = 'rgba(120,255,245,0.75)'; ctx.stroke(); ctx.fillStyle = 'rgba(210,40,60,0.97)'; ctx.fillRect(-3, -13, 9, 9); ctx.fillStyle = 'rgba(232,236,245,0.97)'; ctx.beginPath(); ctx.arc(1.5, -15, 3.3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = 'rgba(60,225,255,0.92)'; ctx.fillRect(-1, -16, 4.5, 1.7); ctx.fillStyle = 'rgba(120,255,220,0.82)'; ctx.fillRect(8, -2, 4, 4); ctx.restore();"
+}

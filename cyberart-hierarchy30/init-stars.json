@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-stars",
+  "name": "Glade Init Stars",
+  "description": "Seed star particles",
+  "phase": "getDefaultState",
+  "code": "var n=120+R.int(80),arr=[];for(var i=0;i<n;i++){arr.push({x:R.dec()*dimensionContext.width,y:R.dec()*dimensionContext.height,z:0.2+R.dec()*0.8,tw:R.dec()*6.283});} return Object.assign({}, state, {stars:arr});"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-julia-boundary-update",
+  "name": "Glade Julia Boundary Update",
+  "description": "Animate Julia parameter sampled from Mandelbrot boundary and cycle gradients/iterations",
+  "phase": "update",
+  "code": "if (!state.julia) state.julia = {}; var j = state.julia; j.time = (j.time || 0) + 1; j.iterHold = (j.iterHold || 0) + 1; if (j.iterHold > 90) { j.iterHold = 0; j.targetIter = 8 + R.int(23); j.gradA = (j.gradA + 35 + R.dec() * 40) % 360; j.gradB = (j.gradB + 45 + R.dec() * 40) % 360; j.gradC = (j.gradC + 55 + R.dec() * 40) % 360; j.gradD = (j.gradD + 65 + R.dec() * 40) % 360; } j.maxIter += (j.targetIter - j.maxIter) * 0.08; j.gradShift = (j.gradShift || 0) + 0.018; j.t = (j.t || 0) + 0.011; var t = j.t; var wob = j.boundaryWobble || 0.14; var cx = -0.745 + wob * Math.cos(t * 1.7) + 0.06 * Math.cos(t * 0.53 + 2.1); var cy = 0.186 + wob * Math.sin(t * 1.3) + 0.05 * Math.sin(t * 0.79 + 0.6); j.cx = cx; j.cy = cy; return state;"
+}

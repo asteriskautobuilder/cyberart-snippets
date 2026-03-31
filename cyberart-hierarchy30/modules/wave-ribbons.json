@@ -1,0 +1,7 @@
+{
+  "id": "glade-wave-ribbons",
+  "name": "Glade Wave Ribbons",
+  "description": "Animate ribbons",
+  "phase": "update",
+  "code": "var a=state.ribbons||[],t=state.t||0;for(var i=0;i<a.length;i++){a[i].off=Math.sin(t*a[i].f+a[i].ph);}return state;"
+}

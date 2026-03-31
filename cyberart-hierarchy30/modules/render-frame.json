@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-frame",
+  "name": "Glade Render Frame",
+  "description": "Subtle frame border",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;c.strokeStyle='rgba(220,220,255,0.14)';c.lineWidth=2;c.strokeRect(2,2,w-4,h-4);"
+}

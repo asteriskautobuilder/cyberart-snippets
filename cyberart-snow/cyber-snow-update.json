@@ -1,0 +1,7 @@
+{
+  "id": "glade-cyber-snow-update",
+  "name": "Glade Cyber Snow Update",
+  "description": "Animate snowflakes falling with light wind drift and reset at top",
+  "phase": "update",
+  "code": "var flakes = state.flakes;\nif (!flakes) return state;\nvar w = dimensionContext.width;\nvar h = dimensionContext.height;\nfor (var i = 0; i < flakes.length; i++) {\n  var f = flakes[i];\n  var wind = Math.sin(framesElapsed * 0.01 + f.phase + f.y * 0.01) * 0.35;\n  f.x += f.vx + wind;\n  f.y += f.vy;\n  f.phase += f.spin;\n  if (f.y > h + 8) {\n    f.y = -8;\n    f.x = R.dec() * w;\n  }\n  if (f.x < -12) f.x = w + 12;\n  if (f.x > w + 12) f.x = -12;\n}\nreturn state;"
+}

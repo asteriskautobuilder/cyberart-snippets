@@ -1,0 +1,11 @@
+{
+  "id": "glade-snowflake-starfield-glades-v3",
+  "name": "Snowflake Star Field in the Glades v3",
+  "description": "Full-frame first-person storm starfield with very large passing hardwood trees",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-starfield-glades-init-v2", "version": 1 },
+    { "moduleId": "glade-starfield-glades-update-v2", "version": 1 },
+    { "moduleId": "glade-starfield-glades-render-v3", "version": 1 }
+  ]
+}

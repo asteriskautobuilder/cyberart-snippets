@@ -1,0 +1,7 @@
+{
+  "id": "glade-mecha-santa-update",
+  "name": "Glade Mecha Santa Update",
+  "description": "Animate mecha Santa sleigh flyby motion",
+  "phase": "update",
+  "code": "if (!state.mechaSanta) state.mechaSanta = { t: 0, bobPhase: 0 }; state.mechaSanta.t = (state.mechaSanta.t + 0.0026) % 1; state.mechaSanta.bobPhase += 0.065; return state;"
+}

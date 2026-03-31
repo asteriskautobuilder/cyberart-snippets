@@ -1,0 +1,7 @@
+{
+  "id": "glade-spawn-sparks",
+  "name": "Glade Spawn Sparks",
+  "description": "Spawn transient sparks",
+  "phase": "update",
+  "code": "var a=state.sparks||[];if((state.t||0)%6===0){for(var i=0;i<3;i++){a.push({x:R.dec()*dimensionContext.width,y:R.dec()*dimensionContext.height,vx:(R.dec()-0.5)*1.8,vy:(R.dec()-0.5)*1.8,life:24+R.int(24),h:R.dec()*360});}}state.sparks=a;return state;"
+}

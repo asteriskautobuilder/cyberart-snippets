@@ -1,0 +1,12 @@
+{
+  "id": "glade-flappy-night-run",
+  "name": "Glade Flappy Night Run",
+  "description": "Cyberpunk flappy avatar weaving through trees and ice pillars on a night slope; H for help, ESC to close.",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-flappy-init", "version": 1 },
+    { "moduleId": "glade-flappy-state", "version": 1 },
+    { "moduleId": "glade-flappy-night-bg", "version": 1 },
+    { "moduleId": "glade-flappy-render", "version": 1 }
+  ]
+}

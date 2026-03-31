@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-petals",
+  "name": "Glade Init Petals",
+  "description": "Seed toroidal petals",
+  "phase": "getDefaultState",
+  "code": "var n=30+R.int(40),arr=[];for(var i=0;i<n;i++){arr.push({x:R.dec()*dimensionContext.width,y:R.dec()*dimensionContext.height,vx:(R.dec()-0.5)*0.8,vy:(R.dec()-0.5)*0.8,rot:R.dec()*6.283,vr:(R.dec()-0.5)*0.05,size:3+R.dec()*7,h:R.dec()*360});}return Object.assign({},state,{petals:arr});"
+}

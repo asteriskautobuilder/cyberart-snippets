@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-sparks",
+  "name": "Glade Init Sparks",
+  "description": "Seed spark list",
+  "phase": "getDefaultState",
+  "code": "return Object.assign({},state,{sparks:[]});"
+}

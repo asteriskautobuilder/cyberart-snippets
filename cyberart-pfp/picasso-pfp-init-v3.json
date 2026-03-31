@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init-v3",
+  "name": "Glade Picasso PFP Init v3",
+  "description": "Initialize coherent multi-perspective cubist face structure with emotional archetypes",
+  "phase": "getDefaultState",
+  "code": "var p={};p.archetype=R.int(4);p.emotion=R.int(5);p.bgHue=180+R.int(170);p.h1=R.int(360);p.h2=(p.h1+30+R.int(130))%360;p.h3=(p.h2+25+R.int(120))%360;p.h4=(p.h1+170+R.int(60))%360;p.centerX=0.5+(-0.04+R.dec()*0.08);p.centerY=0.52+(-0.05+R.dec()*0.08);p.scale=0.88+R.dec()*0.22;p.split=-0.14+R.dec()*0.28;p.tilt=-0.20+R.dec()*0.40;p.profile=0.24+R.dec()*0.52;p.cheek=0.22+R.dec()*0.44;p.jaw=0.28+R.dec()*0.34;p.brow=0.12+R.dec()*0.20;p.eyeGap=0.14+R.dec()*0.12;p.noseLen=0.16+R.dec()*0.14;p.mouthCurve=-0.18+R.dec()*0.42;p.shadow=0.24+R.dec()*0.30;return Object.assign({},state,{pfp:p});"
+}

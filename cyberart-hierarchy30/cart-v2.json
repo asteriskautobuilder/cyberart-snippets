@@ -1,0 +1,40 @@
+{
+  "id": "glade-aurora-circuit-garden-v2",
+  "name": "Aurora Circuit Garden v2",
+  "description": "Compatibility hotfix: flattened 36-module cart with shared reusable components",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-core-init", "version": 1 },
+    { "moduleId": "glade-init-stars", "version": 1 },
+    { "moduleId": "glade-init-orbs", "version": 1 },
+    { "moduleId": "glade-init-ribbons", "version": 1 },
+    { "moduleId": "glade-init-petals", "version": 1 },
+    { "moduleId": "glade-init-sparks", "version": 1 },
+    { "moduleId": "glade-init-grid", "version": 1 },
+
+    { "moduleId": "glade-tick-time", "version": 1 },
+    { "moduleId": "glade-drift-stars", "version": 1 },
+    { "moduleId": "glade-wrap-stars", "version": 1 },
+    { "moduleId": "glade-orbit-orbs", "version": 1 },
+    { "moduleId": "glade-pulse-orbs", "version": 1 },
+    { "moduleId": "glade-wave-ribbons", "version": 1 },
+    { "moduleId": "glade-twirl-petals", "version": 1 },
+    { "moduleId": "glade-spawn-sparks", "version": 1 },
+    { "moduleId": "glade-move-sparks", "version": 1 },
+    { "moduleId": "glade-decay-sparks", "version": 1 },
+
+    { "moduleId": "glade-clear-bg", "version": 1 },
+    { "moduleId": "glade-render-gradient", "version": 1 },
+    { "moduleId": "glade-render-grid", "version": 1 },
+    { "moduleId": "glade-render-stars", "version": 1 },
+    { "moduleId": "glade-render-ribbons", "version": 1 },
+    { "moduleId": "glade-render-orbs", "version": 1 },
+    { "moduleId": "glade-render-petals", "version": 1 },
+    { "moduleId": "glade-render-sparks", "version": 1 },
+    { "moduleId": "glade-render-bloom-dots", "version": 1 },
+    { "moduleId": "glade-render-vignette", "version": 1 },
+    { "moduleId": "glade-render-scanlines", "version": 1 },
+    { "moduleId": "glade-render-hud-glyphs", "version": 1 },
+    { "moduleId": "glade-render-frame", "version": 1 }
+  ]
+}

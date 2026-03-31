@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-orbs",
+  "name": "Glade Init Orbs",
+  "description": "Seed orbiting orbs",
+  "phase": "getDefaultState",
+  "code": "var n=10+R.int(8),arr=[];for(var i=0;i<n;i++){arr.push({r:30+R.dec()*220,a:R.dec()*6.283,s:0.003+R.dec()*0.01,size:3+R.dec()*8,h:R.dec()*360});}return Object.assign({},state,{orbs:arr});"
+}

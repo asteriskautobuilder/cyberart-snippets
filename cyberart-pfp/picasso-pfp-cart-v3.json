@@ -1,0 +1,13 @@
+{
+  "id": "glade-picasso-cubist-pfps-v3",
+  "name": "Picasso Cubist PFPs v3",
+  "description": "Nuanced multi-perspective cubist portraits with coherent feature structure and uncanny emotional tone",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v3", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-bg-v3", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-planes-v3", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-features-v3", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-linework-v3", "version": 1 }
+  ]
+}

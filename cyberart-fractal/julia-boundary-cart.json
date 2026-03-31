@@ -1,0 +1,11 @@
+{
+  "id": "glade-julia-boundary-psychedelic",
+  "name": "Julia Boundary Psychedelic",
+  "description": "Julia fractal sampled near Mandelbrot boundary with random 8-30 iterations and shifting gradients",
+  "frameRate": 30,
+  "modules": [
+    { "moduleId": "glade-julia-boundary-init", "version": 1 },
+    { "moduleId": "glade-julia-boundary-update", "version": 1 },
+    { "moduleId": "glade-julia-boundary-render", "version": 1 }
+  ]
+}

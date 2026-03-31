@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-ribbons",
+  "name": "Glade Init Ribbons",
+  "description": "Seed flowing ribbons",
+  "phase": "getDefaultState",
+  "code": "var n=7+R.int(5),arr=[];for(var i=0;i<n;i++){arr.push({y:R.dec()*dimensionContext.height,amp:8+R.dec()*32,f:0.004+R.dec()*0.02,ph:R.dec()*6.283,th:1+R.dec()*3,h:R.dec()*360});}return Object.assign({},state,{ribbons:arr});"
+}

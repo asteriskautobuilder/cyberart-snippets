@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps-v8",
+  "name": "Picasso Cubist PFPs v8",
+  "description": "High-diversity face-first cubist portraits with painterly palette sets and strong feature readability",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v7", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render-v8", "version": 1 }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-julia-boundary-update-v3",
+  "name": "Glade Julia Boundary Update v3",
+  "description": "Slow drift only; does not change iteration count over time",
+  "phase": "update",
+  "code": "if (!state.julia) state.julia = {}; var j = state.julia; j.time = (j.time || 0) + 1; j.gradShift = (j.gradShift || 0) + 0.006; j.t = (j.t || 0) + 0.0033; var t = j.t; var wob = 0.045 + (j.boundaryWobble || 0.1) * 0.15; j.cx = -0.745 + wob * Math.cos(t * 1.22) + 0.028 * Math.cos(t * 0.33 + 2.1); j.cy = 0.186 + wob * Math.sin(t * 1.08) + 0.024 * Math.sin(t * 0.41 + 0.6); return state;"
+}

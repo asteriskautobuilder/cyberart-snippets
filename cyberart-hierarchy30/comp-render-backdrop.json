@@ -1,0 +1,23 @@
+{
+  "id": "glade-comp-render-backdrop",
+  "name": "Glade Composite Render Backdrop",
+  "description": "Render backdrop layers",
+  "childModules": [
+    {
+      "moduleId": "glade-clear-bg",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-gradient",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-grid",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-stars",
+      "version": 1
+    }
+  ]
+}

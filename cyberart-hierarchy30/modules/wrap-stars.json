@@ -1,0 +1,7 @@
+{
+  "id": "glade-wrap-stars",
+  "name": "Glade Wrap Stars",
+  "description": "Toroidal wrap for stars",
+  "phase": "update",
+  "code": "var a=state.stars||[],w=dimensionContext.width,h=dimensionContext.height;for(var i=0;i<a.length;i++){var s=a[i];if(s.x<0)s.x+=w;if(s.x>w)s.x-=w;if(s.y<0)s.y+=h;if(s.y>h)s.y-=h;}return state;"
+}

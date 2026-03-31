@@ -1,0 +1,7 @@
+{
+  "id": "glade-drift-stars",
+  "name": "Glade Drift Stars",
+  "description": "Drift stars through field",
+  "phase": "update",
+  "code": "var a=state.stars||[];var t=state.t||0;for(var i=0;i<a.length;i++){var s=a[i];s.y+=0.2+s.z*0.7;s.x+=Math.sin(t*0.01+s.tw)*0.25;}return state;"
+}

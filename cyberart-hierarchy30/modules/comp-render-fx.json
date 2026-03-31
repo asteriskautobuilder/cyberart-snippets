@@ -1,0 +1,27 @@
+{
+  "id": "glade-comp-render-fx",
+  "name": "Glade Composite Render FX",
+  "description": "Render mid/high fx layers",
+  "childModules": [
+    {
+      "moduleId": "glade-render-ribbons",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-orbs",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-petals",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-sparks",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-bloom-dots",
+      "version": 1
+    }
+  ]
+}

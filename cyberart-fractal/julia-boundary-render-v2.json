@@ -1,0 +1,7 @@
+{
+  "id": "glade-julia-boundary-render-v2",
+  "name": "Glade Julia Boundary Render v2",
+  "description": "Filigree-forward Julia render with gentle psychedelic gradient drift",
+  "phase": "render",
+  "code": "var ctx=drawingContext,w=dimensionContext.width,h=dimensionContext.height,j=state.julia||{};var maxIter=Math.max(8,Math.min(30,Math.round(j.maxIter||22)));var cx=j.cx||-0.7,cy=j.cy||0.2,shift=j.gradShift||0;var a=(j.gradA||200)*Math.PI/180,b=(j.gradB||280)*Math.PI/180,c=(j.gradC||40)*Math.PI/180,d=(j.gradD||120)*Math.PI/180;var zoom=Math.max(0.92,Math.min(1.35,j.zoom||1.05));var img=ctx.createImageData(w,h),data=img.data;for(var py=0;py<h;py++){for(var px=0;px<w;px++){var x0=((px/w)*2-1)*(zoom*(w/h));var y0=((py/h)*2-1)*zoom;var x=x0,y=y0,i=0;while(i<maxIter){var xx=x*x-y*y+cx;var yy=2*x*y+cy;x=xx;y=yy;if(x*x+y*y>4.0)break;i++;}var k=(py*w+px)*4;if(i>=maxIter){data[k]=1;data[k+1]=1;data[k+2]=8;data[k+3]=255;}else{var zn=Math.sqrt(x*x+y*y);var nu=Math.log(Math.log(zn)/Math.log(2))/Math.log(2);var smooth=i+1-nu;var t=Math.max(0,Math.min(1,smooth/maxIter));var u=t+shift;var r=Math.floor(128+127*Math.sin(6.28318*u+a));var g=Math.floor(128+127*Math.sin(6.28318*u+b));var bl=Math.floor(128+127*Math.sin(6.28318*u+c));var boost=Math.floor(24*Math.sin(6.28318*u+d));r=Math.max(0,Math.min(255,r+boost));g=Math.max(0,Math.min(255,g+boost));bl=Math.max(0,Math.min(255,bl+boost));data[k]=r;data[k+1]=g;data[k+2]=bl;data[k+3]=255;}}}ctx.putImageData(img,0,0);"
+}

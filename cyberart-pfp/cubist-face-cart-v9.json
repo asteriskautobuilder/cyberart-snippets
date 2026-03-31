@@ -1,0 +1,12 @@
+{
+  "id": "glade-cubist-face-structured-v9",
+  "name": "Cubist Face Structured v9",
+  "description": "Plane-first cubist portraits with holistic feature structure and high per-output diversity",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-cubist-face-init-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-bg-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-planes-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-features-v9", "version": 1 }
+  ]
+}

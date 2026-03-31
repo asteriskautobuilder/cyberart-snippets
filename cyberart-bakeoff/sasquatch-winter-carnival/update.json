@@ -1,0 +1,7 @@
+{
+  "id": "glade-squatch-carnival-update",
+  "name": "Glade Squatch Carnival Update",
+  "description": "Animate rides, squatch, and dog",
+  "phase": "update",
+  "code": "(function(){state.t=(state.t||0)+1;var t=state.t||0;var rides=state.rides||[];for(var i=0;i<rides.length;i++){rides[i].a=Math.sin(t*0.02+i);rides[i].off=Math.sin(t*0.03+i*0.7);}var s=state.squatch||{};s.phase=(s.phase||0)+0.04;s.x+=Math.sin(s.phase)*0.15;s.y+=Math.cos(s.phase*0.8)*0.08;var d=state.dog||{x:0,y:0,dir:1};d.x+=d.dir*0.7;if(d.x<dimensionContext.width*0.62)d.dir=1;if(d.x>dimensionContext.width*0.86)d.dir=-1;state.squatch=s;state.dog=d;state.rides=rides;return state;})();"
+}

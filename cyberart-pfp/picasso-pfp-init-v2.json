@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init-v2",
+  "name": "Glade Picasso PFP Init v2",
+  "description": "Initialize varied cubist face archetypes, palette harmonies, and shading controls",
+  "phase": "getDefaultState",
+  "code": "var p={};p.bgHue=170+R.int(190);p.paletteMode=R.int(4);p.faceHueA=R.int(360);p.faceHueB=(p.faceHueA+25+R.int(150))%360;p.faceHueC=(p.faceHueB+20+R.int(150))%360;p.eyeOffset=-0.32+R.dec()*0.64;p.noseTilt=-0.55+R.dec()*1.1;p.mouthY=0.18+R.dec()*0.26;p.split=-0.24+R.dec()*0.48;p.accent=R.int(6);p.headLean=-0.22+R.dec()*0.44;p.cheekCurve=0.2+R.dec()*0.55;p.jawWidth=0.30+R.dec()*0.32;p.browArc=0.10+R.dec()*0.22;p.shade=0.28+R.dec()*0.46;p.profileMix=R.dec();p.eyeStyle=R.int(4);return Object.assign({},state,{pfp:p});"
+}

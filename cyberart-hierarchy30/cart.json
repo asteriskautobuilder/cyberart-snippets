@@ -1,0 +1,32 @@
+{
+  "id": "glade-aurora-circuit-garden",
+  "name": "Aurora Circuit Garden",
+  "description": "Hierarchical reusable cyberart scene with 30+ components and branch reuse",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-comp-init-world",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-comp-update-a",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-comp-update-b",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-comp-render-backdrop",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-comp-render-fx",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-comp-render-post",
+      "version": 1
+    }
+  ]
+}

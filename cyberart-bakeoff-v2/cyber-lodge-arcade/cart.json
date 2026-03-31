@@ -1,0 +1,44 @@
+{
+  "id": "glade-cyber-lodge-arcade-v2",
+  "name": "Cyber Lodge Arcade v2",
+  "description": "Cozy lodge arcade rebuilt around cabinet, layout, character, and neon primitives.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-lodge-interior-shell",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-grid-layout-helper",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-arcade-cabinet-shell",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-color-utils-hsl",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-layer-composite-modes",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-neon-sign-marquee",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-parallax-layer-transform",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-character-agent-mini",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-cyber-lodge-arcade-compose-v2",
+      "version": 1
+    }
+  ]
+}

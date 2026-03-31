@@ -1,0 +1,11 @@
+{
+  "id": "glade-snowflake-starfield-glades",
+  "name": "Snowflake Star Field in the Glades",
+  "description": "First-person cyberpunk ski run through hardwood glades in a snowflake starfield storm",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-starfield-glades-init", "version": 1 },
+    { "moduleId": "glade-starfield-glades-update", "version": 1 },
+    { "moduleId": "glade-starfield-glades-render", "version": 1 }
+  ]
+}

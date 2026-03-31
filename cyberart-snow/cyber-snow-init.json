@@ -1,0 +1,7 @@
+{
+  "id": "glade-cyber-snow-init",
+  "name": "Glade Cyber Snow Init",
+  "description": "Initialize falling snowflake particles for a cyberpunk night scene",
+  "phase": "getDefaultState",
+  "code": "var n = 180 + R.int(120);\nvar flakes = [];\nfor (var i = 0; i < n; i++) {\n  flakes.push({\n    x: R.dec() * dimensionContext.width,\n    y: R.dec() * dimensionContext.height,\n    vy: 0.7 + R.dec() * 2.8,\n    vx: (R.dec() - 0.5) * 0.6,\n    size: 0.8 + R.dec() * 2.4,\n    spin: (R.dec() - 0.5) * 0.05,\n    phase: R.dec() * Math.PI * 2,\n    hue: R.dec() < 0.5 ? 190 + R.dec() * 25 : 300 + R.dec() * 25,\n    alpha: 0.35 + R.dec() * 0.55\n  });\n}\nreturn Object.assign({}, state, { flakes: flakes });"
+}

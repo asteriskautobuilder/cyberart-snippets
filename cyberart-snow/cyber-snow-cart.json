@@ -1,0 +1,11 @@
+{
+  "id": "glade-cyberpunk-snowfall",
+  "name": "Glade Cyberpunk Snowfall",
+  "description": "Neon-tinted snowflakes drifting over a cyberpunk night skyline",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-cyber-snow-init", "version": 1 },
+    { "moduleId": "glade-cyber-snow-update", "version": 1 },
+    { "moduleId": "glade-cyber-snow-render", "version": 1 }
+  ]
+}

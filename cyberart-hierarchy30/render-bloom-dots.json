@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-bloom-dots",
+  "name": "Glade Render Bloom Dots",
+  "description": "Soft bloom dots",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;c.save();c.globalCompositeOperation='lighter';for(var i=0;i<14;i++){var x=((state.worldSeed||0.5)*997+i*73)%w;var y=(i*137+(state.t||0)*0.4)%h;var r=8+(i%5)*4;var g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(180,255,240,0.14)');g.addColorStop(1,'rgba(180,255,240,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();}c.restore();"
+}

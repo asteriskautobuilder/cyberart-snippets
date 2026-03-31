@@ -1,0 +1,7 @@
+{
+  "id": "glade-tick-time",
+  "name": "Glade Tick Time",
+  "description": "Advance global time",
+  "phase": "update",
+  "code": "state.t=(state.t||0)+1;return state;"
+}

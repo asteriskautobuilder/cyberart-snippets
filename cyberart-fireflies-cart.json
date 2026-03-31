@@ -1,0 +1,210 @@
+{
+  "id": "fireflies-at-dusk",
+  "name": "Fireflies at Dusk",
+  "description": "Glowing fireflies drift through a twilight sky studded with twinkling stars",
+  "frameRate": 60,
+  "status": "audited",
+  "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+  "modules": [
+    {
+      "moduleId": "firefly-init",
+      "version": 1
+    },
+    {
+      "moduleId": "firefly-physics",
+      "version": 1
+    },
+    {
+      "moduleId": "firefly-visuals",
+      "version": 1
+    }
+  ],
+  "resolvedModules": [
+    {
+      "id": "firefly-init",
+      "name": "Firefly Initializer",
+      "description": "Initializes firefly positions, velocities, glow properties and background stars",
+      "version": 1,
+      "status": "audited",
+      "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedAt": "2026-03-30T05:48:48.012Z",
+      "codeHash": "0e587ff16c5f514047815d1a0e3b77ef4e5d7b0459876f0faa88fa4416d19f76",
+      "phase": "getDefaultState",
+      "code": "var n = 30 + R.int(20);\nvar ff = [];\nfor (var i = 0; i < n; i++) {\n  ff.push({\n    x: R.dec() * dimensionContext.width,\n    y: R.dec() * dimensionContext.height,\n    vx: (R.dec() - 0.5) * 0.4,\n    vy: (R.dec() - 0.5) * 0.3,\n    phase: R.dec() * Math.PI * 2,\n    glowSpeed: 0.015 + R.dec() * 0.025,\n    baseSize: 2 + R.dec() * 3,\n    hue: 40 + R.dec() * 40,\n    brightness: 0\n  });\n}\nvar ns = 80 + R.int(70);\nvar stars = [];\nfor (var i = 0; i < ns; i++) {\n  stars.push({\n    x: R.dec() * dimensionContext.width,\n    y: R.dec() * dimensionContext.height * 0.8,\n    size: 0.3 + R.dec() * 1.2,\n    twinkleSpeed: 0.01 + R.dec() * 0.03,\n    twinklePhase: R.dec() * Math.PI * 2\n  });\n}\nreturn Object.assign({}, state, { fireflies: ff, stars: stars });",
+      "stateSchema": {
+        "type": "object",
+        "properties": {
+          "fireflies": {
+            "minItems": 30,
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "phase": {
+                  "type": "number",
+                  "max": 6.3,
+                  "min": 0
+                },
+                "baseSize": {
+                  "type": "number",
+                  "max": 5,
+                  "min": 2
+                },
+                "vx": {
+                  "type": "number",
+                  "max": 0.5,
+                  "min": -0.5
+                },
+                "vy": {
+                  "type": "number",
+                  "max": 0.5,
+                  "min": -0.5
+                },
+                "brightness": {
+                  "type": "number",
+                  "max": 1,
+                  "min": 0
+                },
+                "x": {
+                  "type": "number",
+                  "max": 1920,
+                  "min": 0
+                },
+                "glowSpeed": {
+                  "type": "number",
+                  "max": 0.04,
+                  "min": 0.015
+                },
+                "y": {
+                  "type": "number",
+                  "max": 1080,
+                  "min": 0
+                },
+                "hue": {
+                  "type": "number",
+                  "max": 80,
+                  "min": 40
+                }
+              }
+            }
+          },
+          "stars": {
+            "minItems": 80,
+            "maxItems": 150,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "max": 1920,
+                  "min": 0
+                },
+                "twinkleSpeed": {
+                  "type": "number",
+                  "max": 0.04,
+                  "min": 0.01
+                },
+                "y": {
+                  "type": "number",
+                  "max": 864,
+                  "min": 0
+                },
+                "twinklePhase": {
+                  "type": "number",
+                  "max": 6.3,
+                  "min": 0
+                },
+                "size": {
+                  "type": "number",
+                  "max": 1.5,
+                  "min": 0.3
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "firefly-physics",
+      "name": "Firefly Physics",
+      "description": "Composite module grouping movement and glow update logic",
+      "version": 1,
+      "status": "audited",
+      "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedAt": "2026-03-30T05:48:43.252Z",
+      "codeHash": "ad1e26066637d18f500318563e09c716fe3b0f6cf646ce32fb4c79f995aa15f5",
+      "resolvedChildren": [
+        {
+          "id": "firefly-movement",
+          "name": "Firefly Movement",
+          "description": "Drifts fireflies with gentle sine-wave motion and wraps at screen edges",
+          "version": 1,
+          "status": "audited",
+          "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedAt": "2026-03-30T05:48:47.071Z",
+          "codeHash": "9a01a4c884a3886a9e2b4bd322cfd2b0a05db488b66767cc573017dca2f01f04",
+          "phase": "update",
+          "code": "var ff = state.fireflies;\nif (!ff) return state;\nvar w = dimensionContext.width;\nvar h = dimensionContext.height;\nfor (var i = 0; i < ff.length; i++) {\n  var f = ff[i];\n  f.x += f.vx + Math.sin(framesElapsed * 0.007 + f.phase) * 0.4;\n  f.y += f.vy + Math.cos(framesElapsed * 0.005 + f.phase * 1.3) * 0.3;\n  if (f.x < -30) f.x = w + 30;\n  if (f.x > w + 30) f.x = -30;\n  if (f.y < -30) f.y = h + 30;\n  if (f.y > h + 30) f.y = -30;\n}\nreturn state;"
+        },
+        {
+          "id": "firefly-glow",
+          "name": "Firefly Glow",
+          "description": "Pulses each firefly's brightness using a shaped sine wave for organic glow",
+          "version": 1,
+          "status": "audited",
+          "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedAt": "2026-03-30T05:48:46.191Z",
+          "codeHash": "007c97b102d28c42a1db0d7d12d8105dc28421ce9e57219199f35b79b3f6f16d",
+          "phase": "update",
+          "code": "var ff = state.fireflies;\nif (!ff) return state;\nfor (var i = 0; i < ff.length; i++) {\n  var f = ff[i];\n  var raw = Math.sin(framesElapsed * f.glowSpeed + f.phase);\n  f.brightness = Math.pow(Math.max(0, raw), 2.5);\n}\nreturn state;"
+        }
+      ]
+    },
+    {
+      "id": "firefly-visuals",
+      "name": "Firefly Visuals",
+      "description": "Composite module grouping sky and firefly rendering",
+      "version": 1,
+      "status": "audited",
+      "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+      "auditedAt": "2026-03-30T05:48:42.171Z",
+      "codeHash": "ad1e26066637d18f500318563e09c716fe3b0f6cf646ce32fb4c79f995aa15f5",
+      "resolvedChildren": [
+        {
+          "id": "render-dusk-sky",
+          "name": "Dusk Sky Renderer",
+          "description": "Draws a deep twilight gradient sky with twinkling background stars",
+          "version": 1,
+          "status": "audited",
+          "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedAt": "2026-03-30T05:48:45.291Z",
+          "codeHash": "6e15fb01af5b1336be9c981bc0a6e25743fd6e58b0526b89fda8b6f6d1cbf9fa",
+          "phase": "render",
+          "code": "var ctx = drawingContext;\nvar w = dimensionContext.width;\nvar h = dimensionContext.height;\nvar grad = ctx.createLinearGradient(0, 0, 0, h);\ngrad.addColorStop(0, '#05051a');\ngrad.addColorStop(0.3, '#0a0a2e');\ngrad.addColorStop(0.6, '#1a1040');\ngrad.addColorStop(1, '#0d1520');\nctx.fillStyle = grad;\nctx.fillRect(0, 0, w, h);\nvar stars = state.stars;\nif (stars) {\n  for (var i = 0; i < stars.length; i++) {\n    var s = stars[i];\n    var t = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(framesElapsed * s.twinkleSpeed + s.twinklePhase));\n    ctx.beginPath();\n    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);\n    ctx.fillStyle = 'rgba(255,255,255,' + t.toFixed(2) + ')';\n    ctx.fill();\n  }\n}"
+        },
+        {
+          "id": "render-fireflies",
+          "name": "Firefly Renderer",
+          "description": "Renders each firefly with a soft radial glow and bright core using additive blending",
+          "version": 1,
+          "status": "audited",
+          "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+          "auditedAt": "2026-03-30T05:48:44.293Z",
+          "codeHash": "e86df3160b31e2b0be8a5d85f04bc831fc21ac5116a7d509993d368d4f750e89",
+          "phase": "render",
+          "code": "var ctx = drawingContext;\nvar ff = state.fireflies;\nif (!ff) return;\nctx.save();\nctx.globalCompositeOperation = 'lighter';\nfor (var i = 0; i < ff.length; i++) {\n  var f = ff[i];\n  var a = f.brightness || 0;\n  if (a < 0.01) continue;\n  var sz = f.baseSize * (0.5 + a * 0.5);\n  var r = sz * 8;\n  var h = Math.floor(f.hue);\n  var grd = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);\n  grd.addColorStop(0, 'hsla(' + h + ',100%,80%,' + (a * 0.6).toFixed(3) + ')');\n  grd.addColorStop(0.3, 'hsla(' + h + ',100%,60%,' + (a * 0.15).toFixed(3) + ')');\n  grd.addColorStop(1, 'hsla(' + h + ',100%,50%,0)');\n  ctx.fillStyle = grd;\n  ctx.fillRect(f.x - r, f.y - r, r * 2, r * 2);\n  ctx.beginPath();\n  ctx.arc(f.x, f.y, sz * 0.4, 0, Math.PI * 2);\n  ctx.fillStyle = 'hsla(' + h + ',100%,95%,' + a.toFixed(3) + ')';\n  ctx.fill();\n}\nctx.restore();"
+        }
+      ]
+    }
+  ]
+}

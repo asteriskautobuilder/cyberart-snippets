@@ -1,0 +1,7 @@
+{
+  "id": "glade-starfield-glades-update",
+  "name": "Glade Starfield Glades Update",
+  "description": "Advance first-person movement through snow and glade trees",
+  "phase": "update",
+  "code": "state.runT = (state.runT || 0) + 0.022;\nvar flakes = state.flakes || [];\nfor (var i = 0; i < flakes.length; i++) {\n  var f = flakes[i];\n  f.z -= 0.018 + (Math.sin(state.runT + f.tw) * 0.002);\n  if (f.z <= 0.04) {\n    f.x = (R.dec() - 0.5) * 2.0;\n    f.y = R.dec();\n    f.z = 0.85 + R.dec() * 0.2;\n    f.tw = R.dec() * Math.PI * 2;\n  }\n}\nvar trees = state.trees || [];\nfor (var t = 0; t < trees.length; t++) {\n  var tr = trees[t];\n  tr.y += 0.014 + (1.0 - tr.y) * 0.004;\n  if (tr.y > 1.08) {\n    tr.side = R.dec() < 0.5 ? -1 : 1;\n    tr.lane = R.dec();\n    tr.y = -0.15 - R.dec() * 0.35;\n    tr.h = 0.12 + R.dec() * 0.22;\n  }\n}\nreturn state;"
+}

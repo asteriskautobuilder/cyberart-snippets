@@ -1,0 +1,7 @@
+{
+  "id": "glade-cubist-face-planes-v9",
+  "name": "Glade Cubist Face Planes v9",
+  "description": "Angular multi-perspective face planes",
+  "phase": "render",
+  "code": "var ctx=drawingContext,f=state.cubistFrame,p=state.cubist||{}; if(!f) return; var w=f.w,h=f.h; var cx=f.x+w*(p.cx||0.5), cy=f.y+h*(p.cy||0.54), sc=(p.scale||1), fw=w*0.56*sc, fh=h*0.74*sc, split=(p.split||0)*fw; function hs(hh,s,l,a){return 'hsla('+(((hh%360)+360)%360)+','+s+'%,'+l+'%,'+a+')';} var pal=f.pal; ctx.save(); ctx.translate(cx,cy); ctx.rotate((p.tilt||0)*0.11); ctx.beginPath(); ctx.moveTo(-fw*0.45,-fh*0.40); ctx.lineTo(-fw*(0.52+p.cheek*0.1),-fh*0.02); ctx.lineTo(-fw*(0.42+p.jaw*0.1),fh*0.40); ctx.lineTo(-fw*0.10,fh*0.50); ctx.lineTo(fw*0.18,fh*0.46); ctx.lineTo(fw*0.36,fh*0.14); ctx.lineTo(fw*0.28,-fh*(0.40+p.forehead*0.08)); ctx.lineTo(split,-fh*0.54); ctx.closePath(); ctx.fillStyle=hs(pal[0],62,58,1); ctx.fill(); ctx.beginPath(); ctx.moveTo(split,-fh*0.54); ctx.lineTo(fw*0.24,-fh*0.46); ctx.lineTo(fw*0.42,-fh*0.18); ctx.lineTo(fw*0.34,fh*0.16); ctx.lineTo(fw*0.18,fh*0.44); ctx.lineTo(fw*0.00,fh*0.38); ctx.lineTo(split,fh*0.22); ctx.closePath(); ctx.fillStyle=hs(pal[1],54,62,0.98); ctx.fill(); ctx.beginPath(); ctx.moveTo(-fw*0.08,-fh*0.08); ctx.lineTo(fw*0.12,fh*0.02); ctx.lineTo(fw*0.02,fh*0.26); ctx.lineTo(-fw*0.14,fh*0.20); ctx.closePath(); ctx.fillStyle=hs(pal[3],50,50,0.94); ctx.fill(); ctx.strokeStyle='rgba(20,18,20,0.82)'; ctx.lineWidth=Math.max(2,w*0.0075); ctx.stroke(); ctx.restore();"
+}

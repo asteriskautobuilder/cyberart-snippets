@@ -1,0 +1,60 @@
+{
+  "id": "glade-cyber-lodge-arcade-v3",
+  "name": "Cyber Lodge Arcade v3",
+  "description": "Cozy neon ski-town lodge arcade with two agents playing mini-games, powered by core lib primitives.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "lib-canvas-fill-background",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-noise-pixel-noise",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-color-three-stop-gradient",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-parallax-layer-transform",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-anim-oscillator-init",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-anim-oscillator-update",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-looping-lane-1d",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-particle-emitter-configurable",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-particle-emitter-render",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-text-positioned",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-text-shadow",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-draw-glow-point",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-cyber-lodge-arcade-compose-v3",
+      "version": 1
+    }
+  ]
+}

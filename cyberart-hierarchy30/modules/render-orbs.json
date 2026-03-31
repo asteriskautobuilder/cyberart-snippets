@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-orbs",
+  "name": "Glade Render Orbs",
+  "description": "Render orbiting orbs",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height,cx=w*0.5,cy=h*0.5,a=state.orbs||[];c.save();c.globalCompositeOperation='lighter';for(var i=0;i<a.length;i++){var o=a[i],x=cx+Math.cos(o.a)*o.r,y=cy+Math.sin(o.a)*o.r,s=o.size*(o.p||1);var g=c.createRadialGradient(x,y,0,x,y,s*2.4);g.addColorStop(0,'hsla('+o.h+',100%,78%,0.75)');g.addColorStop(1,'hsla('+o.h+',100%,50%,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,s*2.4,0,Math.PI*2);c.fill();}c.restore();"
+}

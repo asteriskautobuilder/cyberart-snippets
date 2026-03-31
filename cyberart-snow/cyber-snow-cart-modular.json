@@ -1,0 +1,14 @@
+{
+  "id": "glade-cyberpunk-snowfall-modular",
+  "name": "Glade Cyberpunk Snowfall — Modular",
+  "description": "Modular scene using reusable mecha Santa modules + snowfall scene modules",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-cyber-snow-init", "version": 1 },
+    { "moduleId": "glade-cyber-snow-update", "version": 1 },
+    { "moduleId": "glade-mecha-santa-init", "version": 1 },
+    { "moduleId": "glade-mecha-santa-update", "version": 1 },
+    { "moduleId": "glade-cyber-snow-scene-render", "version": 1 },
+    { "moduleId": "glade-mecha-santa-render", "version": 1 }
+  ]
+}

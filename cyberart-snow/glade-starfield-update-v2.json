@@ -1,0 +1,7 @@
+{
+  "id": "glade-starfield-glades-update-v2",
+  "name": "Glade Starfield Glades Update v2",
+  "description": "Advance full-frame snow drift and aggressive side-pass tree motion",
+  "phase": "update",
+  "code": "state.runT = (state.runT || 0) + 0.026;\nvar flakes = state.flakes || [];\nfor (var i = 0; i < flakes.length; i++) {\n  var f = flakes[i];\n  f.z -= 0.014 + Math.sin(state.runT + f.tw) * 0.003;\n  f.y += 0.005 + (1.0 - f.z) * 0.008;\n  f.x += f.vx + Math.sin(state.runT * 0.5 + f.tw) * 0.0015;\n  if (f.z <= 0.05 || f.y > 1.12 || f.x < -0.15 || f.x > 1.15) {\n    f.x = R.dec();\n    f.y = -0.08 - R.dec() * 0.30;\n    f.z = 0.78 + R.dec() * 0.22;\n    f.vx = (R.dec() - 0.5) * 0.012;\n    f.tw = R.dec() * Math.PI * 2;\n  }\n}\nvar trees = state.trees || [];\nfor (var t = 0; t < trees.length; t++) {\n  var tr = trees[t];\n  tr.y += 0.022 + (1.05 - tr.y) * 0.009;\n  tr.lane += (Math.sin(state.runT + t * 0.8) * 0.0015);\n  if (tr.y > 1.18) {\n    tr.side = R.dec() < 0.5 ? -1 : 1;\n    tr.lane = R.dec();\n    tr.y = -0.28 - R.dec() * 0.42;\n    tr.h = 0.22 + R.dec() * 0.30;\n  }\n}\nreturn state;"
+}

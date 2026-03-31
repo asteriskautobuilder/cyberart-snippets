@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init-v4",
+  "name": "Glade Picasso PFP Init v4",
+  "description": "Initialize strongly varied cubist face blueprints with non-overlapping feature anchors",
+  "phase": "getDefaultState",
+  "code": "var p={};p.faceType=R.int(6);p.eyeTypeL=R.int(5);p.eyeTypeR=R.int(5);p.noseType=R.int(4);p.mouthType=R.int(4);p.browType=R.int(4);p.bgHue=170+R.int(180);p.h1=R.int(360);p.h2=(p.h1+35+R.int(140))%360;p.h3=(p.h2+20+R.int(140))%360;p.h4=(p.h3+30+R.int(140))%360;p.cx=0.5+(-0.06+R.dec()*0.12);p.cy=0.53+(-0.06+R.dec()*0.12);p.scale=0.86+R.dec()*0.28;p.tilt=-0.24+R.dec()*0.48;p.split=-0.20+R.dec()*0.40;p.profile=0.20+R.dec()*0.58;p.eyeGap=0.20+R.dec()*0.16;p.eyeY=0.30+R.dec()*0.10;p.noseY=0.46+R.dec()*0.09;p.mouthY=0.64+R.dec()*0.10;p.jaw=0.30+R.dec()*0.34;p.cheek=0.20+R.dec()*0.40;p.shadow=0.20+R.dec()*0.28;return Object.assign({},state,{pfp:p});"
+}

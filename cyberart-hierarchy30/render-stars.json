@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-stars",
+  "name": "Glade Render Stars",
+  "description": "Render stars",
+  "phase": "render",
+  "code": "var c=drawingContext,a=state.stars||[];c.save();c.globalCompositeOperation='lighter';for(var i=0;i<a.length;i++){var s=a[i];var r=0.4+s.z*1.8;var al=0.25+0.55*(0.5+0.5*Math.sin((state.t||0)*0.02+s.tw));c.beginPath();c.arc(s.x,s.y,r,0,Math.PI*2);c.fillStyle='rgba(220,245,255,'+al.toFixed(3)+')';c.fill();}c.restore();"
+}

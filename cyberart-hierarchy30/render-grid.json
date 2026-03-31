@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-grid",
+  "name": "Glade Render Grid",
+  "description": "Render tilted grid",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height,g=state.grid||{spacing:28,tilt:0.1};c.save();c.strokeStyle='rgba(120,220,255,0.10)';c.lineWidth=1;for(var y=-h;y<h*2;y+=g.spacing){c.beginPath();c.moveTo(0,y);c.lineTo(w,y+g.tilt*w);c.stroke();}for(var x=-w;x<w*2;x+=g.spacing){c.beginPath();c.moveTo(x,0);c.lineTo(x-g.tilt*h,h);c.stroke();}c.restore();"
+}

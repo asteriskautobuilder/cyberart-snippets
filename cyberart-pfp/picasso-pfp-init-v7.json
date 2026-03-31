@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init-v7",
+  "name": "Glade Picasso PFP Init v7",
+  "description": "Initialize high-diversity cubist face parameters with painterly palette sets",
+  "phase": "getDefaultState",
+  "code": "var p={};p.faceType=R.int(8);p.eyeTypeL=R.int(6);p.eyeTypeR=R.int(6);p.noseType=R.int(5);p.mouthType=R.int(5);p.paletteSet=R.int(5);p.cx=0.5+(-0.06+R.dec()*0.12);p.cy=0.53+(-0.06+R.dec()*0.12);p.scale=0.84+R.dec()*0.28;p.tilt=-0.22+R.dec()*0.44;p.split=-0.20+R.dec()*0.40;p.eyeGap=0.13+R.dec()*0.18;p.eyeY=0.27+R.dec()*0.12;p.noseY=0.42+R.dec()*0.12;p.mouthY=0.62+R.dec()*0.14;p.mouthW=0.22+R.dec()*0.22;p.jaw=0.26+R.dec()*0.38;p.cheek=0.18+R.dec()*0.42;p.shadow=0.16+R.dec()*0.34;p.asym= -0.18+R.dec()*0.36;return Object.assign({},state,{pfp:p});"
+}

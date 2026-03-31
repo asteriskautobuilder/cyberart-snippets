@@ -1,0 +1,7 @@
+{
+  "id": "glade-julia-boundary-init-v2",
+  "name": "Glade Julia Boundary Init v2",
+  "description": "Initialize Julia fractal with fixed per-output iteration count",
+  "phase": "getDefaultState",
+  "code": "var s = state || {}; var p = {}; p.time = 0; p.maxIter = 8 + R.int(23); p.t = R.dec() * Math.PI * 2; p.gradA = R.dec() * 360; p.gradB = R.dec() * 360; p.gradC = R.dec() * 360; p.gradD = R.dec() * 360; p.gradShift = 0; p.boundaryWobble = 0.08 + R.dec() * 0.18; p.zoom = 1.0 + R.dec() * 0.35; p.cx = -0.745; p.cy = 0.186; return Object.assign({}, s, { julia: p });"
+}

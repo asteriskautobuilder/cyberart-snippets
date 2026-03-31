@@ -1,0 +1,48 @@
+{
+  "id": "glade-squatch-winter-carnival-v2",
+  "name": "Sasquatch Winter Carnival v2",
+  "description": "Squatch, dog, rides, crowd and lights re-built using primitive library modules.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-scene-night-mountain",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-snow-surface-and-tracks",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-orbit-path",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-ease-curves",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-particle-emitter-basic",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-radial-light-cones",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-multi-character-crowd-strip",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-squatch-character-actor",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-dog-character-actor",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-squatch-carnival-compose-v2",
+      "version": 1
+    }
+  ]
+}

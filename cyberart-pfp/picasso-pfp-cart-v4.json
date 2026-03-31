@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps-v4",
+  "name": "Picasso Cubist PFPs v4",
+  "description": "Non-overlapping coherent cubist faces with stronger archetype variation and connective line structure",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v4", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render-v4", "version": 1 }
+  ]
+}

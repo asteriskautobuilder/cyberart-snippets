@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-sparks",
+  "name": "Glade Render Sparks",
+  "description": "Render spark particles",
+  "phase": "render",
+  "code": "var c=drawingContext,a=state.sparks||[];c.save();c.globalCompositeOperation='lighter';for(var i=0;i<a.length;i++){var s=a[i],al=Math.min(1,s.life/40);c.fillStyle='hsla('+s.h+',100%,70%,'+al.toFixed(3)+')';c.fillRect(s.x,s.y,2,2);}c.restore();"
+}

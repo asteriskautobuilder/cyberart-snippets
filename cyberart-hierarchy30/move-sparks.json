@@ -1,0 +1,7 @@
+{
+  "id": "glade-move-sparks",
+  "name": "Glade Move Sparks",
+  "description": "Move sparks",
+  "phase": "update",
+  "code": "var a=state.sparks||[];for(var i=0;i<a.length;i++){a[i].x+=a[i].vx;a[i].y+=a[i].vy;}return state;"
+}

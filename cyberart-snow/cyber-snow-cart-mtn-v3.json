@@ -1,0 +1,11 @@
+{
+  "id": "glade-cyberpunk-snowfall-mountains-v3",
+  "name": "Glade Cyberpunk Snowfall — Mountains v3",
+  "description": "Neon snowfall with moon, river, mountains, and mecha Santa sleigh flyby",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-cyber-snow-init", "version": 1 },
+    { "moduleId": "glade-cyber-snow-update", "version": 1 },
+    { "moduleId": "glade-cyber-snow-render-mtn-v3", "version": 1 }
+  ]
+}

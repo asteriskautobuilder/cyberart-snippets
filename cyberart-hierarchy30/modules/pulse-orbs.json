@@ -1,0 +1,7 @@
+{
+  "id": "glade-pulse-orbs",
+  "name": "Glade Pulse Orbs",
+  "description": "Pulse orb size",
+  "phase": "update",
+  "code": "var a=state.orbs||[],t=state.t||0;for(var i=0;i<a.length;i++){a[i].p=0.7+0.3*Math.sin(t*0.03+i);}return state;"
+}

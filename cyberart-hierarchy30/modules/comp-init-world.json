@@ -1,0 +1,35 @@
+{
+  "id": "glade-comp-init-world",
+  "name": "Glade Composite Init World",
+  "description": "Initialize full world",
+  "childModules": [
+    {
+      "moduleId": "glade-core-init",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-stars",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-orbs",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-ribbons",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-petals",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-sparks",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-init-grid",
+      "version": 1
+    }
+  ]
+}

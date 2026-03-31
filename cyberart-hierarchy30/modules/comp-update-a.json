@@ -1,0 +1,27 @@
+{
+  "id": "glade-comp-update-a",
+  "name": "Glade Composite Update A",
+  "description": "Primary simulation branch",
+  "childModules": [
+    {
+      "moduleId": "glade-tick-time",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-drift-stars",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-wrap-stars",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-orbit-orbs",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-pulse-orbs",
+      "version": 1
+    }
+  ]
+}

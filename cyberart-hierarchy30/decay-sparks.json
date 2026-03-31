@@ -1,0 +1,7 @@
+{
+  "id": "glade-decay-sparks",
+  "name": "Glade Decay Sparks",
+  "description": "Decay and cull sparks",
+  "phase": "update",
+  "code": "var a=state.sparks||[],b=[];for(var i=0;i<a.length;i++){a[i].life-=1;if(a[i].life>0)b.push(a[i]);}state.sparks=b;return state;"
+}

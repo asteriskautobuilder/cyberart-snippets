@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init-v5",
+  "name": "Glade Picasso PFP Init v5",
+  "description": "Initialize cubist face with strict in-face feature anchor regions",
+  "phase": "getDefaultState",
+  "code": "var p={};p.faceType=R.int(6);p.eyeTypeL=R.int(5);p.eyeTypeR=R.int(5);p.noseType=R.int(4);p.mouthType=R.int(4);p.browType=R.int(4);p.bgHue=170+R.int(180);p.h1=R.int(360);p.h2=(p.h1+35+R.int(140))%360;p.h3=(p.h2+20+R.int(140))%360;p.h4=(p.h3+30+R.int(140))%360;p.cx=0.5+(-0.05+R.dec()*0.10);p.cy=0.53+(-0.05+R.dec()*0.10);p.scale=0.90+R.dec()*0.22;p.tilt=-0.18+R.dec()*0.36;p.split=-0.16+R.dec()*0.32;p.profile=0.24+R.dec()*0.50;p.eyeGap=0.16+R.dec()*0.10;p.eyeY=0.30+R.dec()*0.08;p.noseY=0.47+R.dec()*0.06;p.mouthY=0.66+R.dec()*0.07;p.jaw=0.32+R.dec()*0.28;p.cheek=0.22+R.dec()*0.34;p.shadow=0.20+R.dec()*0.26;return Object.assign({},state,{pfp:p});"
+}

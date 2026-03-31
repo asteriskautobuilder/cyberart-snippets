@@ -1,0 +1,20 @@
+{
+  "id": "glade-cyber-lodge-arcade",
+  "name": "Cyber Lodge Arcade",
+  "description": "Glade + Moto agents playing mini games in a cozy cyber lodge arcade.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-cyber-lodge-arcade-init",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-cyber-lodge-arcade-update",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-cyber-lodge-arcade-render",
+      "version": 1
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "glade-comp-update-b",
+  "name": "Glade Composite Update B",
+  "description": "Secondary simulation branch reusing tick module",
+  "childModules": [
+    {
+      "moduleId": "glade-tick-time",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-wave-ribbons",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-twirl-petals",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-spawn-sparks",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-move-sparks",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-decay-sparks",
+      "version": 1
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-hud-glyphs",
+  "name": "Glade Render HUD Glyphs",
+  "description": "Tiny glyph corners",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;c.strokeStyle='rgba(120,245,230,0.22)';c.lineWidth=1.5;function corner(x,y,sx,sy){c.beginPath();c.moveTo(x,y+sy*16);c.lineTo(x,y);c.lineTo(x+sx*16,y);c.stroke();}corner(10,10,1,1);corner(w-10,10,-1,1);corner(10,h-10,1,-1);corner(w-10,h-10,-1,-1);"
+}

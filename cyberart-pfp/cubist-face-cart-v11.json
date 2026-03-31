@@ -1,0 +1,12 @@
+{
+  "id": "glade-cubist-face-structured-v11",
+  "name": "Cubist Face Structured v11",
+  "description": "Anchor-band clamp fix for feature placement stability",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-cubist-face-init-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-bg-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-planes-v9", "version": 1 },
+    { "moduleId": "glade-cubist-face-features-v11", "version": 1 }
+  ]
+}

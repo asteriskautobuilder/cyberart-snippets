@@ -1,0 +1,11 @@
+{
+  "id": "glade-julia-boundary-psychedelic-v2",
+  "name": "Julia Boundary Psychedelic v2",
+  "description": "Slower evolving Julia boundary study with more filament detail",
+  "frameRate": 30,
+  "modules": [
+    { "moduleId": "glade-julia-boundary-init", "version": 1 },
+    { "moduleId": "glade-julia-boundary-update-v2", "version": 1 },
+    { "moduleId": "glade-julia-boundary-render-v2", "version": 1 }
+  ]
+}

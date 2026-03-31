@@ -1,0 +1,11 @@
+{
+  "id": "glade-snowflake-starfield-glades-v2",
+  "name": "Snowflake Star Field in the Glades v2",
+  "description": "Full-frame first-person cyberpunk ski starfield with larger passing hardwood trees",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-starfield-glades-init", "version": 1 },
+    { "moduleId": "glade-starfield-glades-update", "version": 1 },
+    { "moduleId": "glade-starfield-glades-render-v2", "version": 1 }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "glade-comp-render-post",
+  "name": "Glade Composite Render Post",
+  "description": "Render post-processing layers",
+  "childModules": [
+    {
+      "moduleId": "glade-render-vignette",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-scanlines",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-hud-glyphs",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-render-frame",
+      "version": 1
+    }
+  ]
+}

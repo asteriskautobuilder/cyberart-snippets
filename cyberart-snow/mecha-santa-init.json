@@ -1,0 +1,7 @@
+{
+  "id": "glade-mecha-santa-init",
+  "name": "Glade Mecha Santa Init",
+  "description": "Initialize mecha Santa sleigh state",
+  "phase": "getDefaultState",
+  "code": "return Object.assign({}, state, { mechaSanta: { t: 0.0, bobPhase: 0.0 } });"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps-v6",
+  "name": "Picasso Cubist PFPs v6",
+  "description": "Portrait-safe (3:4) cubist faces with in-face feature constraints and clear mouth placement",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v6", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render-v6", "version": 1 }
+  ]
+}

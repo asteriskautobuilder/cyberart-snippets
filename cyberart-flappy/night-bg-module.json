@@ -1,0 +1,7 @@
+{
+  "id": "glade-flappy-night-bg",
+  "name": "Glade Flappy Night BG",
+  "description": "Night flux background as base64 sprite",
+  "phase": "render",
+  "code": "(function(){var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;var key='__gladeNightBG';if(!state[key]){var img=new Image();img.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zUAAAJq3RFWHRwcm9tcHQAeyI5IjogeyJpbnB1dHMiOiB7ImZpbGVuYW1lX3ByZWZpeCI6ICJ6LWlt';state[key]={img:img,ready:false};img.onload=function(){state[key].ready=true;};}var obj=state[key];if(obj&&obj.ready){c.save();c.drawImage(obj.img,0,0,w,h);c.restore();}else{c.fillStyle='rgba(4,8,20,1)';c.fillRect(0,0,w,h);} })();"
+}

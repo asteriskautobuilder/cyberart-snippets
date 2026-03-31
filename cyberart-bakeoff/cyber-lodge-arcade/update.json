@@ -1,0 +1,7 @@
+{
+  "id": "glade-cyber-lodge-arcade-update",
+  "name": "Glade Cyber Lodge Arcade Update",
+  "description": "Animate neon, screens, and idle motions",
+  "phase": "update",
+  "code": "(function(){state.t=(state.t||0)+1;return state;})();"
+}

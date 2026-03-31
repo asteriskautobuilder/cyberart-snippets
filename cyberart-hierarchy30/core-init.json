@@ -1,0 +1,7 @@
+{
+  "id": "glade-core-init",
+  "name": "Glade Core Init",
+  "description": "Initialize shared world state and palette",
+  "phase": "getDefaultState",
+  "code": "var p=[[190,305,48],[205,285,36],[170,320,52],[220,260,44]][R.int(4)]; return Object.assign({}, state, {t:0,palette:{a:p[0],b:p[1],c:p[2]}, worldSeed:R.dec()});"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-orbit-orbs",
+  "name": "Glade Orbit Orbs",
+  "description": "Update orb angles",
+  "phase": "update",
+  "code": "var a=state.orbs||[];for(var i=0;i<a.length;i++){a[i].a+=a[i].s;}return state;"
+}

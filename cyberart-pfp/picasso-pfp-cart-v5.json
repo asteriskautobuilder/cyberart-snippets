@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps-v5",
+  "name": "Picasso Cubist PFPs v5",
+  "description": "Cubist portraits with in-face constrained features, richer shape variety, and no connective straight lines",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v5", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render-v5", "version": 1 }
+  ]
+}

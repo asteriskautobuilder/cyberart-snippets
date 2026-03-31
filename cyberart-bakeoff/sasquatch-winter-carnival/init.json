@@ -1,0 +1,7 @@
+{
+  "id": "glade-squatch-carnival-init",
+  "name": "Glade Squatch Carnival Init",
+  "description": "Seed sasquatch winter carnival state",
+  "phase": "getDefaultState",
+  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;return Object.assign({},state,{t:0,lights:[],crowdSeed:Math.random(),rides:[{x:w*0.22,y:h*0.62},{x:w*0.52,y:h*0.60},{x:w*0.78,y:h*0.64}],squatch:{x:w*0.18,y:h*0.60,phase:0},dog:{x:w*0.72,y:h*0.70,dir:1}});})();"
+}

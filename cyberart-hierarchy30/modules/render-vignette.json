@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-vignette",
+  "name": "Glade Render Vignette",
+  "description": "Dark vignette",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;var g=c.createRadialGradient(w*0.5,h*0.5,w*0.15,w*0.5,h*0.5,w*0.75);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.45)');c.fillStyle=g;c.fillRect(0,0,w,h);"
+}

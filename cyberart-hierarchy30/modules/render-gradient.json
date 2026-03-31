@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-gradient",
+  "name": "Glade Render Gradient",
+  "description": "Background gradient",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height,p=state.palette||{a:190,b:300,c:40};var g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,'hsla('+p.a+',70%,12%,1)');g.addColorStop(0.6,'hsla('+p.b+',55%,10%,1)');g.addColorStop(1,'hsla('+p.c+',50%,8%,1)');c.fillStyle=g;c.fillRect(0,0,w,h);"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "glade-cubist-face-bg-v9",
+  "name": "Glade Cubist Face BG v9",
+  "description": "Muted earth-tone background with 3:4 portrait-safe frame",
+  "phase": "render",
+  "code": "var ctx=drawingContext,w=dimensionContext.width,h=dimensionContext.height,p=(state&&state.cubist)||{}; var sets=[[42,18,210,24],[34,8,220,18],[48,22,200,330],[28,14,205,52]]; var pal=sets[p.palette||0]; var ratio=3/4,targetW,targetH;if(w/h>ratio){targetH=h*0.96;targetW=targetH*ratio;}else{targetW=w*0.96;targetH=targetW/ratio;} state.cubistFrame={x:(w-targetW)/2,y:(h-targetH)/2,w:targetW,h:targetH,pal:pal}; function hs(hh,s,l,a){return 'hsla('+(((hh%360)+360)%360)+','+s+'%,'+l+'%,'+a+')';} ctx.fillStyle=hs(pal[2],40,10,1); ctx.fillRect(0,0,w,h); ctx.save(); ctx.translate(state.cubistFrame.x,state.cubistFrame.y); var g=ctx.createLinearGradient(0,0,0,targetH); g.addColorStop(0,hs(pal[0],35,24,1)); g.addColorStop(1,hs(pal[1],28,12,1)); ctx.fillStyle=g; ctx.fillRect(0,0,targetW,targetH); ctx.restore();"
+}

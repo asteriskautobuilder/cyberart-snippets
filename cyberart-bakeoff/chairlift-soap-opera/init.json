@@ -1,0 +1,7 @@
+{
+  "id": "glade-chairlift-soap-init",
+  "name": "Glade Chairlift Soap Init",
+  "description": "Initialize looping chairlift state",
+  "phase": "getDefaultState",
+  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;var chairs=[];for(var i=0;i<6;i++){chairs.push({u:i/6,phase:Math.random()*6.283,scene:i%4});}return Object.assign({},state,{t:0,chairs:chairs});})();"
+}

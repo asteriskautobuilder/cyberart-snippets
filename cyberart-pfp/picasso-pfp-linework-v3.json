@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-linework-v3",
+  "name": "Glade Picasso PFP Linework v3",
+  "description": "Add uncanny emotional contour lines and selective accents",
+  "phase": "render",
+  "code": "var ctx=drawingContext,w=dimensionContext.width,h=dimensionContext.height,p=(state&&state.pfp)||{};function hs(hh,s,l,a){return 'hsla('+(((hh%360)+360)%360)+','+s+'%,'+l+'%,'+a+')';}var cx=w*(p.centerX||0.5),cy=h*(p.centerY||0.52),sc=(p.scale||1.0),fw=w*0.46*sc,fh=h*0.68*sc;ctx.save();ctx.translate(cx,cy);ctx.rotate((p.tilt||0)*0.12);ctx.strokeStyle='rgba(14,16,24,0.78)';ctx.lineWidth=Math.max(1.2,w*0.0055);ctx.beginPath();ctx.moveTo(-fw*0.46,-fh*0.36);ctx.bezierCurveTo(-fw*0.58,-fh*0.06,-fw*0.46,fh*0.34,-fw*0.12,fh*0.46);ctx.stroke();ctx.beginPath();ctx.moveTo(fw*0.02,-fh*0.50);ctx.bezierCurveTo(fw*0.30,-fh*0.36,fw*0.40,-fh*0.06,fw*0.20,fh*0.44);ctx.stroke();var e=(p.emotion||0);ctx.strokeStyle=e===0?'rgba(30,220,255,0.52)':e===1?'rgba(255,80,140,0.52)':e===2?'rgba(255,180,60,0.50)':e===3?'rgba(120,255,150,0.50)':'rgba(180,120,255,0.50)';ctx.lineWidth=Math.max(1,w*0.004);ctx.beginPath();ctx.moveTo(-fw*0.30,fh*0.08);ctx.bezierCurveTo(-fw*0.10,fh*0.02,fw*0.05,fh*0.10,fw*0.24,fh*0.02);ctx.stroke();ctx.beginPath();ctx.moveTo(-fw*0.34,-fh*0.06);ctx.lineTo(-fw*0.44,-fh*0.02);ctx.lineTo(-fw*0.38,fh*0.06);ctx.stroke();ctx.restore();"
+}

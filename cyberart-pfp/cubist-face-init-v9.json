@@ -1,0 +1,7 @@
+{
+  "id": "glade-cubist-face-init-v9",
+  "name": "Glade Cubist Face Init v9",
+  "description": "Initialize holistic cubist face composition + feature parameters",
+  "phase": "getDefaultState",
+  "code": "var p={}; p.seed=R.dec(); p.palette=R.int(4); p.cx=0.5+(-0.04+R.dec()*0.08); p.cy=0.54+(-0.05+R.dec()*0.10); p.scale=0.88+R.dec()*0.20; p.tilt=-0.16+R.dec()*0.32; p.split=-0.16+R.dec()*0.32; p.faceShape=R.int(6); p.jaw=0.30+R.dec()*0.28; p.cheek=0.22+R.dec()*0.30; p.forehead=0.20+R.dec()*0.24; p.eyeBandY=0.29+R.dec()*0.08; p.noseBandY=0.48+R.dec()*0.07; p.mouthBandY=0.68+R.dec()*0.08; p.eyeLType=R.int(6); p.eyeRType=R.int(6); p.eyeGap=0.15+R.dec()*0.14; p.eyeAsym=-0.08+R.dec()*0.16; p.noseType=R.int(5); p.mouthType=R.int(5); p.earType=R.int(4); p.hairType=R.int(4); return Object.assign({}, state, { cubist: p });"
+}

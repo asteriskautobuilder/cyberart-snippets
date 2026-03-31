@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-petals",
+  "name": "Glade Render Petals",
+  "description": "Render petal sprites",
+  "phase": "render",
+  "code": "var c=drawingContext,a=state.petals||[];for(var i=0;i<a.length;i++){var p=a[i];c.save();c.translate(p.x,p.y);c.rotate(p.rot);c.fillStyle='hsla('+p.h+',80%,65%,0.26)';c.beginPath();c.moveTo(0,-p.size);c.quadraticCurveTo(p.size*0.8,0,0,p.size);c.quadraticCurveTo(-p.size*0.8,0,0,-p.size);c.fill();c.restore();}"
+}

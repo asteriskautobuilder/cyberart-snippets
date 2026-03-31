@@ -1,0 +1,108 @@
+{
+  "id": "firefly-init",
+  "name": "Firefly Initializer",
+  "description": "Initializes firefly positions, velocities, glow properties and background stars",
+  "version": 1,
+  "status": "audited",
+  "createdBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+  "auditedBy": "74d8b428-7011-70c4-b9a0-ee0973c3535f",
+  "auditedAt": "2026-03-30T05:48:48.012Z",
+  "codeHash": "0e587ff16c5f514047815d1a0e3b77ef4e5d7b0459876f0faa88fa4416d19f76",
+  "phase": "getDefaultState",
+  "code": "var n = 30 + R.int(20);\nvar ff = [];\nfor (var i = 0; i < n; i++) {\n  ff.push({\n    x: R.dec() * dimensionContext.width,\n    y: R.dec() * dimensionContext.height,\n    vx: (R.dec() - 0.5) * 0.4,\n    vy: (R.dec() - 0.5) * 0.3,\n    phase: R.dec() * Math.PI * 2,\n    glowSpeed: 0.015 + R.dec() * 0.025,\n    baseSize: 2 + R.dec() * 3,\n    hue: 40 + R.dec() * 40,\n    brightness: 0\n  });\n}\nvar ns = 80 + R.int(70);\nvar stars = [];\nfor (var i = 0; i < ns; i++) {\n  stars.push({\n    x: R.dec() * dimensionContext.width,\n    y: R.dec() * dimensionContext.height * 0.8,\n    size: 0.3 + R.dec() * 1.2,\n    twinkleSpeed: 0.01 + R.dec() * 0.03,\n    twinklePhase: R.dec() * Math.PI * 2\n  });\n}\nreturn Object.assign({}, state, { fireflies: ff, stars: stars });",
+  "stateSchema": {
+    "type": "object",
+    "properties": {
+      "fireflies": {
+        "minItems": 30,
+        "maxItems": 50,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "phase": {
+              "type": "number",
+              "max": 6.3,
+              "min": 0
+            },
+            "baseSize": {
+              "type": "number",
+              "max": 5,
+              "min": 2
+            },
+            "vx": {
+              "type": "number",
+              "max": 0.5,
+              "min": -0.5
+            },
+            "vy": {
+              "type": "number",
+              "max": 0.5,
+              "min": -0.5
+            },
+            "brightness": {
+              "type": "number",
+              "max": 1,
+              "min": 0
+            },
+            "x": {
+              "type": "number",
+              "max": 1920,
+              "min": 0
+            },
+            "glowSpeed": {
+              "type": "number",
+              "max": 0.04,
+              "min": 0.015
+            },
+            "y": {
+              "type": "number",
+              "max": 1080,
+              "min": 0
+            },
+            "hue": {
+              "type": "number",
+              "max": 80,
+              "min": 40
+            }
+          }
+        }
+      },
+      "stars": {
+        "minItems": 80,
+        "maxItems": 150,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number",
+              "max": 1920,
+              "min": 0
+            },
+            "twinkleSpeed": {
+              "type": "number",
+              "max": 0.04,
+              "min": 0.01
+            },
+            "y": {
+              "type": "number",
+              "max": 864,
+              "min": 0
+            },
+            "twinklePhase": {
+              "type": "number",
+              "max": 6.3,
+              "min": 0
+            },
+            "size": {
+              "type": "number",
+              "max": 1.5,
+              "min": 0.3
+            }
+          }
+        }
+      }
+    }
+  }
+}

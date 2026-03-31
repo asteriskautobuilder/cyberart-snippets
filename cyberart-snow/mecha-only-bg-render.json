@@ -1,0 +1,7 @@
+{
+  "id": "glade-mecha-only-bg-render",
+  "name": "Glade Mecha Only BG Render",
+  "description": "Simple night sky and moon backdrop for mecha Santa-only cart",
+  "phase": "render",
+  "code": "var ctx = drawingContext; var w = dimensionContext.width; var h = dimensionContext.height; var g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'#050816'); g.addColorStop(1,'#0d1022'); ctx.fillStyle=g; ctx.fillRect(0,0,w,h); var moonX=w*0.78, moonY=h*0.2, moonR=h*0.11; var mg=ctx.createRadialGradient(moonX,moonY,0,moonX,moonY,moonR*2.5); mg.addColorStop(0,'rgba(220,240,255,0.8)'); mg.addColorStop(1,'rgba(150,180,255,0)'); ctx.fillStyle=mg; ctx.beginPath(); ctx.arc(moonX,moonY,moonR*2.5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='rgba(240,248,255,0.95)'; ctx.beginPath(); ctx.arc(moonX,moonY,moonR,0,Math.PI*2); ctx.fill();"
+}

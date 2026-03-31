@@ -1,0 +1,7 @@
+{
+  "id": "glade-init-grid",
+  "name": "Glade Init Grid",
+  "description": "Grid parameters",
+  "phase": "getDefaultState",
+  "code": "return Object.assign({},state,{grid:{spacing:24+R.int(20),tilt:(R.dec()-0.5)*0.25}});"
+}

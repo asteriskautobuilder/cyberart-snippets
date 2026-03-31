@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-bg-v3",
+  "name": "Glade Picasso PFP Background v3",
+  "description": "Paint nuanced cubist backdrop with soft vignette and chroma blocks",
+  "phase": "render",
+  "code": "var ctx=drawingContext,w=dimensionContext.width,h=dimensionContext.height,p=(state&&state.pfp)||{};function hs(hh,s,l,a){return 'hsla('+(((hh%360)+360)%360)+','+s+'%,'+l+'%,'+a+')';}var g=ctx.createRadialGradient(w*0.46,h*0.45,w*0.06,w*0.5,h*0.5,w*0.9);g.addColorStop(0,hs(p.bgHue||240,38,23,1));g.addColorStop(1,hs((p.bgHue||240)+35,42,10,1));ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.globalAlpha=0.32;ctx.fillStyle=hs((p.bgHue||240)+85,64,52,0.35);ctx.beginPath();ctx.moveTo(w*0.02,h*0.14);ctx.lineTo(w*0.38,h*0.06);ctx.lineTo(w*0.30,h*0.42);ctx.closePath();ctx.fill();ctx.fillStyle=hs((p.bgHue||240)-70,70,56,0.30);ctx.beginPath();ctx.moveTo(w*0.70,h*0.10);ctx.lineTo(w*0.98,h*0.24);ctx.lineTo(w*0.78,h*0.46);ctx.closePath();ctx.fill();ctx.globalAlpha=1;"
+}

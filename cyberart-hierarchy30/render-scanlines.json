@@ -1,0 +1,7 @@
+{
+  "id": "glade-render-scanlines",
+  "name": "Glade Render Scanlines",
+  "description": "CRT scanlines",
+  "phase": "render",
+  "code": "var c=drawingContext,w=dimensionContext.width,h=dimensionContext.height;c.fillStyle='rgba(10,10,14,0.08)';for(var y=0;y<h;y+=3){c.fillRect(0,y,w,1);}"
+}

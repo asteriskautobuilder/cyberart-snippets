@@ -1,0 +1,7 @@
+{
+  "id": "glade-picasso-pfp-init",
+  "name": "Glade Picasso PFP Init",
+  "description": "Initialize random cubist face geometry and palette parameters",
+  "phase": "getDefaultState",
+  "code": "var p = {}; p.bgHue = 190 + R.int(160); p.faceHueA = R.int(360); p.faceHueB = (p.faceHueA + 40 + R.int(120)) % 360; p.faceHueC = (p.faceHueB + 30 + R.int(120)) % 360; p.eyeOffset = -0.22 + R.dec() * 0.44; p.noseTilt = -0.35 + R.dec() * 0.7; p.mouthY = 0.22 + R.dec() * 0.16; p.split = -0.12 + R.dec() * 0.24; p.accent = R.int(3); return Object.assign({}, state, { pfp: p });"
+}

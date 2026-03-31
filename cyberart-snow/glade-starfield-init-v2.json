@@ -1,0 +1,7 @@
+{
+  "id": "glade-starfield-glades-init-v2",
+  "name": "Glade Starfield Glades Init v2",
+  "description": "Initialize random full-frame snowfield and large side-pass hardwood trees",
+  "phase": "getDefaultState",
+  "code": "var n = 320 + R.int(180);\nvar flakes = [];\nfor (var i = 0; i < n; i++) {\n  flakes.push({\n    x: R.dec(),\n    y: R.dec(),\n    z: 0.08 + R.dec() * 0.92,\n    vx: (R.dec() - 0.5) * 0.012,\n    tw: R.dec() * Math.PI * 2\n  });\n}\nvar trees = [];\nfor (var t = 0; t < 72; t++) {\n  trees.push({\n    side: R.dec() < 0.5 ? -1 : 1,\n    lane: R.dec(),\n    y: -0.35 + R.dec() * 1.55,\n    h: 0.22 + R.dec() * 0.30\n  });\n}\nreturn Object.assign({}, state, { flakes: flakes, trees: trees, runT: 0 });"
+}

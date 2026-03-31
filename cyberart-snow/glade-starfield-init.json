@@ -1,0 +1,7 @@
+{
+  "id": "glade-starfield-glades-init",
+  "name": "Glade Starfield Glades Init",
+  "description": "Initialize first-person snowflake starfield and glade tree lanes",
+  "phase": "getDefaultState",
+  "code": "var n = 260 + R.int(140);\nvar flakes = [];\nfor (var i = 0; i < n; i++) {\n  flakes.push({\n    x: (R.dec() - 0.5) * 2.0,\n    y: R.dec(),\n    z: 0.1 + R.dec() * 0.9,\n    tw: R.dec() * Math.PI * 2\n  });\n}\nvar trees = [];\nfor (var t = 0; t < 64; t++) {\n  trees.push({\n    side: R.dec() < 0.5 ? -1 : 1,\n    lane: R.dec(),\n    y: R.dec(),\n    h: 0.12 + R.dec() * 0.22\n  });\n}\nreturn Object.assign({}, state, { flakes: flakes, trees: trees, runT: 0 });"
+}

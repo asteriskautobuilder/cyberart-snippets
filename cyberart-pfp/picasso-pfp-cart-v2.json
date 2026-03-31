@@ -1,0 +1,10 @@
+{
+  "id": "glade-picasso-cubist-pfps-v2",
+  "name": "Picasso Cubist PFPs v2",
+  "description": "Higher-fidelity cubist faces with bezier curves, subtle shading, and stronger variation",
+  "frameRate": 1,
+  "modules": [
+    { "moduleId": "glade-picasso-pfp-init-v2", "version": 1 },
+    { "moduleId": "glade-picasso-pfp-render-v2", "version": 1 }
+  ]
+}

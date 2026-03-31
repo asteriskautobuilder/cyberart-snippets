@@ -1,0 +1,12 @@
+{
+  "id": "glade-mecha-santa-only",
+  "name": "Glade Mecha Santa Only",
+  "description": "Mecha Santa sleigh flyby using the exact same reusable mecha modules",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-mecha-santa-init", "version": 1 },
+    { "moduleId": "glade-mecha-santa-update", "version": 1 },
+    { "moduleId": "glade-mecha-only-bg-render", "version": 1 },
+    { "moduleId": "glade-mecha-santa-render", "version": 1 }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "glade-julia-boundary-psychedelic-v3",
+  "name": "Julia Boundary Psychedelic v3",
+  "description": "Fixed per-output iteration count (8-30), slow filament-preserving drift",
+  "frameRate": 30,
+  "modules": [
+    { "moduleId": "glade-julia-boundary-init-v2", "version": 1 },
+    { "moduleId": "glade-julia-boundary-update-v3", "version": 1 },
+    { "moduleId": "glade-julia-boundary-render-v2", "version": 1 }
+  ]
+}
