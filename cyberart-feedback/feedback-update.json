@@ -1,0 +1,8 @@
+{
+  "id": "glade-feedback-update-0401",
+  "name": "Glade Feedback Update",
+  "description": "Move shape and modulate feedback parameters",
+  "phase": "update",
+  "category": "Motion",
+  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;var fb=state.fb||{};fb.t=(fb.t||0)+1;fb.orbX=(fb.orbX||w*0.3)+(fb.vx||2.2);fb.orbY=(fb.orbY||h*0.4)+(fb.vy||1.8);var r=fb.r||28;if(fb.orbX<r||fb.orbX>w-r){fb.vx=-(fb.vx||2.2);}if(fb.orbY<r||fb.orbY>h-r){fb.vy=-(fb.vy||1.8);}fb.rot=0.008+0.012*Math.sin((fb.t||0)*0.014);fb.scale=0.987+0.009*(0.5+0.5*Math.sin((fb.t||0)*0.011));state.fb=fb;return state;})();"
+}

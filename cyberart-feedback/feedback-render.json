@@ -1,0 +1,8 @@
+{
+  "id": "glade-feedback-render-0401",
+  "name": "Glade Feedback Render",
+  "description": "Recursive rotated feedback with moving sigil shape",
+  "phase": "render",
+  "category": "Feedback",
+  "code": "(function(){var ctx=drawingContext,w=dimensionContext.width,h=dimensionContext.height;var fb=state.fb||{};var t=fb.t||0;ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle='rgba(2,5,12,0.08)';ctx.fillRect(0,0,w,h);ctx.translate(w*0.5,h*0.5);ctx.rotate(fb.rot||0.012);var s=fb.scale||0.992;ctx.scale(s,s);ctx.globalAlpha=0.93;ctx.drawImage(ctx.canvas,-w*0.5,-h*0.5,w,h);ctx.restore();var x=fb.orbX||w*0.5,y=fb.orbY||h*0.5,r=fb.r||26;var hue=(210+80*Math.sin(t*0.02));ctx.save();ctx.globalCompositeOperation='lighter';ctx.fillStyle='hsla('+hue+',85%,62%,0.28)';ctx.beginPath();ctx.arc(x,y,r*2.1,0,Math.PI*2);ctx.fill();ctx.fillStyle='hsla('+(hue+40)+',92%,66%,0.92)';ctx.beginPath();ctx.moveTo(x+r*1.15,y);ctx.lineTo(x-r*0.9,y-r*0.72);ctx.lineTo(x-r*0.4,y+r*0.98);ctx.closePath();ctx.fill();ctx.strokeStyle='hsla('+(hue+150)+',95%,75%,0.95)';ctx.lineWidth=2;ctx.stroke();ctx.restore();})();"
+}

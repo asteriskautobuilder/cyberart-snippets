@@ -1,0 +1,11 @@
+{
+  "id": "glade-rot-feedback-sigil-0401",
+  "name": "Glade Rot Feedback Sigil",
+  "description": "Recursive rotated video-feedback with a moving sigil-like shape between camera and screen.",
+  "frameRate": 60,
+  "modules": [
+    { "moduleId": "glade-feedback-init-0401", "version": 1 },
+    { "moduleId": "glade-feedback-update-0401", "version": 1 },
+    { "moduleId": "glade-feedback-render-0401", "version": 1 }
+  ]
+}
