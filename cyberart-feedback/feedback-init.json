@@ -1,8 +1,8 @@
 {
   "id": "glade-feedback-init-0401",
   "name": "Glade Feedback Init",
-  "description": "Initialize state for rotated video-feedback scene",
+  "description": "Initialize moving orb for rotated feedback scene",
   "phase": "getDefaultState",
   "category": "Systems",
-  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;return Object.assign({},state,{fb:{t:0,rot:0.014,scale:0.992,orbX:w*0.28,orbY:h*0.42,vx:2.4,vy:1.7,r:Math.max(22,Math.min(w,h)*0.04)}});})();"
+  "code": "(function(){var w=dimensionContext.width,h=dimensionContext.height;return Object.assign({},state,{fb:{t:0,rot:0.012,scale:0.992,orbX:w*0.28,orbY:h*0.42,vx:2.4,vy:1.7,r:Math.max(22,Math.min(w,h)*0.04)}});})();"
 }

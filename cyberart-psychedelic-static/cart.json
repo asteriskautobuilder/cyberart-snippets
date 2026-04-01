@@ -1,0 +1,36 @@
+{
+  "id": "glade-psychedelic-tv-static",
+  "name": "Psychedelic TV Static",
+  "description": "Black-and-white TV static with pulsing forward/back motion and occasional color washes.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "lib-canvas-clear-black",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-math-perlin-1d",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-anim-frame-counter-init",
+      "version": 1
+    },
+    {
+      "moduleId": "lib-anim-frame-counter-update",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-psy-static-init",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-psy-static-update",
+      "version": 1
+    },
+    {
+      "moduleId": "glade-psy-static-render",
+      "version": 1
+    }
+  ]
+}

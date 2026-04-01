@@ -1,0 +1,7 @@
+{
+  "id": "glade-psy-static-render",
+  "name": "Glade Psychedelic Static Render",
+  "description": "Render black-and-white TV static with breathing motion and rare rainbow washes",
+  "phase": "render",
+  "code": "(function(){\n  var c = drawingContext,\n      w = dimensionContext.width,\n      h = dimensionContext.height;\n  var imgData = c.getImageData(0,0,w,h);\n  var data = imgData.data;\n  var depthT = state.depthT||0;\n  var burstAmt = state.colorBurstAmt||0;\n  for(var y=0;y<h;y++){\n    for(var x=0;x<w;x++){\n      var idx=(y*w+x)*4;\n      var n = R.dec();\n      var grain = (n*255)|0;\n      var d = 0.4 + 0.6*Math.sin((y/h*6.283)+(depthT*3.14159));\n      var v = grain*d;\n      var r=v,g=v,b=v;\n      if(burstAmt>0){\n        var hue = (x/w*360 + y/h*90 + (state.t||0)*0.5)|0;\n        var sat = 50+burstAmt*50;\n        var light = 35+burstAmt*35;\n        var a = sat/100, l = light/100;\n        var k = (1-Math.abs(2*l-1))*a;\n        var kk=hue/60;\n        var xC=k*(1-Math.abs(kk%2-1));\n        var m=l-k/2;\n        var rr,gg,bb;\n        if(kk<1){rr=k;gg=xC;bb=0;}\n        else if(kk<2){rr=xC;gg=k;bb=0;}\n        else if(kk<3){rr=0;gg=k;bb=xC;}\n        else if(kk<4){rr=0;gg=xC;bb=k;}\n        else if(kk<5){rr=xC;gg=0;bb=k;}\n        else{rr=k;gg=0;bb=xC;}\n        r=255*(rr+m);\n        g=255*(gg+m);\n        b=255*(bb+m);\n      }\n      data[idx]=r;\n      data[idx+1]=g;\n      data[idx+2]=b;\n      data[idx+3]=255;\n    }\n  }\n  c.putImageData(imgData,0,0);\n})();"
+}

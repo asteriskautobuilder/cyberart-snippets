@@ -1,0 +1,7 @@
+{
+  "id": "glade-psy-static-init",
+  "name": "Glade Psychedelic Static Init",
+  "description": "Initialize TV static noise field and motion phase",
+  "phase": "getDefaultState",
+  "code": "(function(){\n  return Object.assign({}, state, {\n    t: 0,\n    staticSeedX: Math.random()*1000,\n    staticSeedY: Math.random()*1000,\n    staticPhase: 0,\n    staticDir: 1,\n    colorBurstPhase: 0,\n    perlinX: 0\n  });\n})();"
+}

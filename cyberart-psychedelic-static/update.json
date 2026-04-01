@@ -1,0 +1,7 @@
+{
+  "id": "glade-psy-static-update",
+  "name": "Glade Psychedelic Static Update",
+  "description": "Animate depth-like motion and occasional color bursts using 1D Perlin",
+  "phase": "update",
+  "code": "(function(){\n  var t = (state.t||0)+1;\n  state.t = t;\n  var cycle = 480;\n  var local = t % cycle;\n  var forwardSpan = cycle*0.6;\n  var dir = (local < forwardSpan) ? 1 : -1;\n  state.staticDir = dir;\n  var tt = (dir>0) ? (local/forwardSpan) : ((local-forwardSpan)/(cycle-forwardSpan));\n  tt = Math.max(0, Math.min(1, tt));\n  state.depthT = tt;\n  var bp = (state.colorBurstPhase||0) + 0.004;\n  state.colorBurstPhase = bp;\n  var burst = 0.5+0.5*Math.sin(bp*2*Math.PI*0.25);\n  state.colorBurstAmt = burst>0.85 ? (burst-0.85)/0.15 : 0;\n  state.perlinX = (state.perlinX||0) + 0.01*dir;\n  return state;\n})();"
+}
