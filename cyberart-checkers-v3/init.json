@@ -1,0 +1,8 @@
+{
+  "id": "glade-checkers-v3-init",
+  "name": "Glade Checkers v3 Init",
+  "description": "Initialize board from multiplayer gameManager state when available",
+  "phase": "getDefaultState",
+  "category": "Games",
+  "code": "var board = []; for (var r = 0; r < 8; r++) { var row = []; for (var c = 0; c < 8; c++) { var piece = 0; if ((r + c) % 2 === 1) { if (r < 3) piece = 2; else if (r > 4) piece = 1; } row.push(piece); } board.push(row); } var turn = 1; if (gameManager && gameManager.gameState && gameManager.gameState.board) { board = gameManager.gameState.board; turn = gameManager.gameState.currentTurn || 1; } return Object.assign({}, state, { board: board, turn: turn, selected: null, validMoves: [], aiThinking: 0, gameOver: false, winner: null, message: gameManager ? 'Multiplayer checkers: join and play.' : 'Your turn! Click a red piece.' });"
+}

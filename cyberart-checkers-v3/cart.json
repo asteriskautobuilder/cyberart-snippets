@@ -1,0 +1,19 @@
+{
+  "id": "glade-checkers-v3",
+  "name": "Moonlit Checkers v3 (Multiplayer)",
+  "description": "Turn-based multiplayer checkers using gameManager and server-authoritative state.",
+  "frameRate": 60,
+  "multiplayer": {
+    "enabled": true,
+    "mode": "turn-based",
+    "minPlayers": 2,
+    "maxPlayers": 2,
+    "ruleset": { "kind": "grid-turn-based", "gameType": "checkers" },
+    "visibility": "private-to-players"
+  },
+  "modules": [
+    { "moduleId": "glade-checkers-v3-init", "version": 1 },
+    { "moduleId": "glade-checkers-v3-update", "version": 1 },
+    { "moduleId": "grace-checkers-render", "version": 1 }
+  ]
+}
