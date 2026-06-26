@@ -1,7 +1,7 @@
 {
   "id": "glade-dev-grind-coffee-init",
-  "name": "Dev Grind Coffee Init",
-  "description": "Initialize the software engineer coffee runner state",
+  "name": "Dev Grind Coffee Init V2",
+  "description": "Initialize the larger double-jump software engineer coffee runner state",
   "phase": "getDefaultState",
-  "code": "(function(){\n  var w=dimensionContext.width,h=dimensionContext.height;\n  var ground=Math.max(64,Math.min(92,h*0.15));\n  return Object.assign({}, state, {\n    grind:{\n      x:w*0.22,y:h-ground-42,vy:0,w:28,h:42,\n      frame:0,score:0,cups:0,best:0,speed:4.2,\n      started:false,over:false,lastJump:false,lastHelp:false,lastClick:false,\n      pulse:0,shake:0,message:'CLICK / SPACE TO START'\n    },\n    grindObstacles:[],\n    grindCoffee:[],\n    grindParticles:[],\n    grindKeys:{},\n    grindHelp:false\n  });\n})();"
+  "code": "(function(){\n  var w=960,h=540;\n  var ground=88;\n  return Object.assign({}, state, {\n    grind:{\n      x:138,y:h-ground-64,vy:0,w:44,h:64,jumpsLeft:2,\n      frame:0,score:0,cups:0,best:0,speed:5.1,nextObstacle:58,nextCoffee:92,\n      started:false,over:false,lastJump:false,lastHelp:false,audioReady:false,\n      pulse:0,shake:0,message:'CLICK / SPACE TO START',deathReason:''\n    },\n    grindObstacles:[],\n    grindCoffee:[],\n    grindParticles:[],\n    grindKeys:{},\n    grindHelp:false\n  });\n})();"
 }

@@ -1,20 +1,20 @@
 {
-  "id": "glade-dev-grind-coffee-runner",
-  "name": "Dev Grind Coffee Runner",
-  "description": "A playable cyberart runner where a software engineer dodges 9-5 dev obstacles and powers up on coffee. Click or press space to begin.",
+  "id": "glade-dev-grind-coffee-runner-v2",
+  "name": "Dev Grind Coffee Runner V2",
+  "description": "A playable cyberart runner where a software engineer dodges 9-5 dev obstacles, double-jumps, and powers up on reachable coffee. Click or press space to begin.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dev-grind-coffee-init",
-      "version": 1
+      "version": 2
     },
     {
       "moduleId": "glade-dev-grind-coffee-update",
-      "version": 1
+      "version": 2
     },
     {
       "moduleId": "glade-dev-grind-coffee-render",
-      "version": 1
+      "version": 2
     }
   ]
 }
