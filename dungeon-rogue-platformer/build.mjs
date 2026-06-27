@@ -50,12 +50,30 @@ const updateCode = String.raw`
   ];
   var floorNames=['Crypt of Rust','Fungal Aqueduct','Ashen Library','Clockwork Catacomb','Obsidian Choir'];
   function kset(){var o={};try{var a=keyboardManager&&keyboardManager.getPressedKeys?keyboardManager.getPressedKeys():[];for(var i=0;i<a.length;i++){var key=String(a[i]).toLowerCase();o[key]=true;if(key==='arrowleft')o.left=true;if(key==='arrowright')o.right=true;if(key==='arrowup')o.up=true;if(key==='arrowdown')o.down=true;}}catch(e){}return o;}
-  var k=kset(),click=pointerManager&&pointerManager.consumeClick?pointerManager.consumeClick():null;
-  function hit(rx,ry,rw,rh){return click&&click.x>=rx&&click.x<=rx+rw&&click.y>=ry&&click.y<=ry+rh;}
-  var left=!!(k.arrowleft||k.left||k.a||hit(0,H-140,150,140));
-  var right=!!(k.arrowright||k.right||k.d||hit(150,H-140,170,140));
-  var jump=!!(k[' ']||k.space||k.spacebar||k.arrowup||k.up||k.w||hit(W-320,H-140,150,140));
-  var attack=!!(k.j||k.x||k.z||k.enter||hit(W-160,H-140,160,140));
+  function normPoint(p){
+    if(!p)return null;var x=typeof p.x==='number'?p.x:(typeof p.clientX==='number'?p.clientX:NaN),y=typeof p.y==='number'?p.y:(typeof p.clientY==='number'?p.clientY:NaN);
+    if(!isFinite(x)||!isFinite(y))return null;
+    try{if(typeof dimensionContext!=='undefined'&&dimensionContext&&dimensionContext.width&&dimensionContext.height&&(dimensionContext.width!==W||dimensionContext.height!==H)){var sc=Math.min(dimensionContext.width/W,dimensionContext.height/H),ox=(dimensionContext.width-W*sc)/2,oy=(dimensionContext.height-H*sc)/2;x=(x-ox)/sc;y=(y-oy)/sc;}}catch(e){}
+    return {x:x,y:y};
+  }
+  function heldPointer(){
+    if(!pointerManager)return null;try{
+      var p=null,down=false;
+      if(pointerManager.getPointer) p=pointerManager.getPointer();
+      else if(pointerManager.getPointerPosition) p=pointerManager.getPointerPosition();
+      else p=pointerManager.pointer||pointerManager.current||pointerManager.position||pointerManager.mouse||null;
+      down=!!(pointerManager.isDown||pointerManager.pointerDown||pointerManager.down||pointerManager.pressed||(p&&(p.isDown||p.down||p.pressed)));
+      if(pointerManager.isPointerDown) down=!!pointerManager.isPointerDown();
+      if(pointerManager.isPressed) down=!!pointerManager.isPressed();
+      return down?normPoint(p):null;
+    }catch(e){return null;}}
+  var k=kset(),click=normPoint(pointerManager&&pointerManager.consumeClick?pointerManager.consumeClick():null),held=heldPointer(),controlPoint=held||click;
+  function hitPt(pt,rx,ry,rw,rh){return pt&&pt.x>=rx&&pt.x<=rx+rw&&pt.y>=ry&&pt.y<=ry+rh;}
+  function hit(rx,ry,rw,rh){return hitPt(click,rx,ry,rw,rh);}
+  var left=!!(k.arrowleft||k.left||k.a||hitPt(controlPoint,0,H-140,150,140));
+  var right=!!(k.arrowright||k.right||k.d||hitPt(controlPoint,150,H-140,170,140));
+  var jump=!!(k[' ']||k.space||k.spacebar||k.arrowup||k.up||k.w||hitPt(controlPoint,W-320,H-140,150,140));
+  var attack=!!(k.j||k.x||k.z||k.enter||hitPt(controlPoint,W-160,H-140,160,140));
   var up=!!(k.arrowup||k.up||k.w),down=!!(k.arrowdown||k.down||k.s),confirm=!!(k.enter||k.return||k[' ']||k.space||k.spacebar),back=!!(k.escape||k.esc);
 
   function snd(freq,dur,type,gain){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx)return;var ac=root.__drpAudio||(root.__drpAudio=new Ctx());if(ac.state==='suspended')ac.resume();var o=ac.createOscillator(),gn=ac.createGain();o.type=type||'square';o.frequency.value=freq;gn.gain.setValueAtTime(gain||0.035,ac.currentTime);gn.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+dur);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);g.audioReady=true;}catch(e){}}
@@ -249,13 +267,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v3",
-  name: "Dungeon Relic Rogue V3",
-  description: "A stability pass for the NES-flavored roguelike platformer: safe starts, cleaner HUD, reliable class/weapon selection, keyboard/touch controls, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v4",
+  name: "Dungeon Relic Rogue V4",
+  description: "A touch-control stability pass for the NES-flavored roguelike platformer: normalized pointer input, held movement zones, safe starts, cleaner HUD, reliable class/weapon selection, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 3 },
-    { moduleId: "glade-dungeon-rogue-update", version: 3 },
+    { moduleId: "glade-dungeon-rogue-update", version: 4 },
     { moduleId: "glade-dungeon-rogue-render", version: 3 }
   ]
 });
