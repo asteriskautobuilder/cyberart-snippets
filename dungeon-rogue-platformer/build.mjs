@@ -17,7 +17,7 @@ const initCode = String.raw`
       atkTimer:0,invuln:0,onGround:false,shake:0,message:'Choose a class',
       className:'',weaponName:'',weaponTier:1,weaponKind:'',weaponRange:52,
       stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},
-      buffs:{},last:{},audioReady:false,musicTick:0,musicStep:0
+      buffs:{},last:{},audioReady:false,audioBlocked:false,musicTick:0,musicStep:0,musicBar:0
     },
     drpEnemies:[],drpProjectiles:[],drpDrops:[],drpParticles:[],drpPlatforms:[],drpHazards:[]
   });
@@ -94,9 +94,10 @@ const updateCode = String.raw`
   var attack=!!(k.j||k.x||k.z||k.enter||hitPt(held,W-160,H-140,160,140)||hit(W-160,H-140,160,140)||aimClick);
   var up=!!(k.arrowup||k.up||k.w),down=!!(k.arrowdown||k.down||k.s),confirm=!!(k.enter||k.return||k.space||k.spacebar),back=!!(k.escape||k.esc);
 
-  function snd(freq,dur,type,gain){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx)return;var ac=root.__drpAudio||(root.__drpAudio=new Ctx());if(ac.state==='suspended')ac.resume();var o=ac.createOscillator(),gn=ac.createGain();o.type=type||'square';o.frequency.value=freq;gn.gain.setValueAtTime(gain||0.035,ac.currentTime);gn.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+dur);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);g.audioReady=true;}catch(e){}}
+  function armAudio(){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx){g.audioBlocked=true;return null;}var ac=root.__drpAudio||(root.__drpAudio=new Ctx());if(ac.state==='suspended'&&ac.resume)ac.resume();g.audioReady=ac.state!=='suspended';g.audioBlocked=!g.audioReady;return ac;}catch(e){g.audioBlocked=true;return null;}}
+  function snd(freq,dur,type,gain){try{var ac=armAudio();if(!ac||!g.audioReady)return;var o=ac.createOscillator(),gn=ac.createGain();o.type=type||'square';o.frequency.value=freq;gn.gain.setValueAtTime(gain||0.035,ac.currentTime);gn.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+dur);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);}catch(e){g.audioBlocked=true;}}
   function sfx(n){if(n==='hit'){snd(92,.16,'sawtooth',.06);snd(54,.22,'square',.03);}else if(n==='atk'){snd(220,.05,'square',.035);snd(440,.05,'triangle',.02);}else if(n==='drop'){snd(620,.06,'triangle',.035);snd(920,.08,'sine',.025);}else if(n==='level'){snd(330,.07,'square',.04);snd(660,.1,'triangle',.04);snd(990,.12,'sine',.025);}else if(n==='select'){snd(300,.04,'square',.025);}else if(n==='boss'){snd(80,.26,'sawtooth',.08);}}
-  function music(){if(!g.audioReady||g.screen!=='play')return;g.musicTick--;if(g.musicTick>0)return;g.musicTick=12;var bass=[55,55,82,65,55,98,82,65],lead=[220,247,196,165,220,294,247,196];var step=g.musicStep++%8;snd(bass[step],.08,'square',.018);if(step%2===0)snd(lead[step],.055,'triangle',.012);}
+  function music(){if(g.screen!=='play'||!g.audioReady)return;g.musicTick--;if(g.musicTick>0)return;g.musicTick=9;var bass=[55,55,82,65,55,98,82,65,49,49,73,61,49,92,73,61],lead=[220,247,196,165,220,294,247,196,196,247,294,330,294,247,196,165],step=g.musicStep++%16;g.musicBar=Math.floor(g.musicStep/16);snd(bass[step],.09,'square',.016);if(step%2===0)snd(lead[step],.06,'triangle',.01);if(step%4===0)snd(110,.18,'sawtooth',.007);}
   function rnd(a,b){return a+Math.random()*(b-a);}
   function rect(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
   function puff(x,y,col,n){for(var i=0;i<(n||8);i++)parts.push({x:x,y:y,vx:rnd(-2.8,2.8),vy:rnd(-4,1.5),life:24+Math.random()*18,c:col||'#fff'});}
@@ -124,14 +125,15 @@ const updateCode = String.raw`
     var hp=base[0]+g.level*10+(boss?120:0),dmg=base[1]+g.level*2;
     en.push({type:type,x:x,y:FLOOR-base[3],w:base[2],h:base[3],vx:0,vy:0,hp:hp,max:hp,dmg:dmg,boss:!!boss,timer:Math.random()*80,jump:0,dir:-1,cd:40+Math.random()*50,xp:(boss?220:14+g.level*6)});
   }
-  function start(){g.classIndex=Math.max(0,Math.min(classes.length-1,g.classIndex|0));g.weaponIndex=Math.max(0,Math.min(1,g.weaponIndex|0));applyClass();g.level=1;g.screen='play';g.dead=false;g.won=false;g.last={};makeLevel();sfx('select');}
-  function chooseMenu(max){if(up&&!g.last.up){g.menuIndex=(g.menuIndex+max-1)%max;sfx('select');}if(down&&!g.last.down){g.menuIndex=(g.menuIndex+1)%max;sfx('select');}}
+  function start(){armAudio();g.classIndex=Math.max(0,Math.min(classes.length-1,g.classIndex|0));g.weaponIndex=Math.max(0,Math.min(1,g.weaponIndex|0));applyClass();g.level=1;g.screen='play';g.dead=false;g.won=false;g.last={};g.musicTick=1;makeLevel();sfx('select');}
+  function chooseMenu(max){if(up&&!g.last.up){armAudio();g.menuIndex=(g.menuIndex+max-1)%max;sfx('select');}if(down&&!g.last.down){armAudio();g.menuIndex=(g.menuIndex+1)%max;sfx('select');}}
   function clickedClass(){if(!click)return -1;for(var i=0;i<classes.length;i++){var y=206+i*48;if(hit(150,y-26,660,36))return i;}return -1;}
   function clickedWeapon(){if(!click)return -1;for(var i=0;i<2;i++){var y=250+i*58;if(hit(250,y-31,460,42))return i;}return -1;}
   function clickedStat(){if(!click)return -1;for(var i=0;i<stats.length;i++){var y=170+i*38;if(hit(236,y-24,488,30))return i;}return -1;}
 
   g.frame++; music();
   for(var bn in g.buffs){if(g.buffs[bn]>0)g.buffs[bn]--;else delete g.buffs[bn];}
+  if(click||held||left||right||jump||attack||confirm||up||down)armAudio();
   if(g.screen==='class'){chooseMenu(classes.length);var cc=clickedClass();if(cc>=0){g.menuIndex=cc;g.classIndex=cc;g.screen='weapon';g.menuIndex=0;sfx('select');}else{g.classIndex=g.menuIndex;if(confirm&&!g.last.confirm){g.screen='weapon';g.menuIndex=0;sfx('select');}}g.last={up:up,down:down,confirm:confirm};return state;}
   if(g.screen==='weapon'){chooseMenu(2);var cw=clickedWeapon();if(cw>=0){g.weaponIndex=cw;start();}else{g.weaponIndex=g.menuIndex;if(back&&!g.last.back){g.screen='class';g.menuIndex=g.classIndex;}if(confirm&&!g.last.confirm)start();}g.last={up:up,down:down,confirm:confirm,back:back};return state;}
   if(g.screen==='levelup'){
@@ -270,7 +272,7 @@ const renderCode = String.raw`
     for(var r=0;r<parts.length;r++){var p=parts[r];c.globalAlpha=Math.max(0,p.life/40);c.fillStyle=p.c;c.fillRect(p.x,p.y,3,3);c.globalAlpha=1;}
     c.restore();for(var e=0;e<en.length;e++)drawEnemy(en[e]);drawPlayer();c.restore();
   }
-  function hud(){panel(14,12,320,70);txt('DUNGEON RELIC ROGUE',28,36,17,'#dffdf5');txt((levelNames[(g.level||1)-1]||'Dungeon')+'  '+g.level+'/'+g.maxLevel,28,60,12,'#f0d36b');panel(350,12,250,70);var hpw=132;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,24,hpw,10);c.fillStyle='#ff5577';c.fillRect(368,24,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,512,34,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,46,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(368,46,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,512,55,10,'#c8fbff');txt((g.className||'')+' / '+(g.weaponName||''),368,72,10,'#fff');panel(632,12,314,70);txt('MOVE  A/D or ARROWS',650,34,10,'#d9e8ff');txt('JUMP  W/SPACE/UP',650,52,10,'#d9e8ff');txt('ATTACK  J/X/Z or CLICK',650,70,10,'#d9e8ff');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,112,15,'#8ef7ff','center');txt(g.audioReady?'audio armed':'audio arms on attack',W-20,104,9,g.audioReady?'#8ef7ff':'#ffd87a','right');
+  function hud(){panel(14,12,320,70);txt('DUNGEON RELIC ROGUE',28,36,17,'#dffdf5');txt((levelNames[(g.level||1)-1]||'Dungeon')+'  '+g.level+'/'+g.maxLevel,28,60,12,'#f0d36b');panel(350,12,250,70);var hpw=132;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,24,hpw,10);c.fillStyle='#ff5577';c.fillRect(368,24,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,512,34,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,46,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(368,46,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,512,55,10,'#c8fbff');txt((g.className||'')+' / '+(g.weaponName||''),368,72,10,'#fff');panel(632,12,314,70);txt('MOVE  A/D or ARROWS',650,34,10,'#d9e8ff');txt('JUMP  W/SPACE/UP',650,52,10,'#d9e8ff');txt('ATTACK  J/X/Z or CLICK',650,70,10,'#d9e8ff');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,112,15,'#8ef7ff','center');var aud=g.audioReady?'music on':g.audioBlocked?'audio blocked':'click/press for music';txt(aud,W-20,104,9,g.audioReady?'#8ef7ff':g.audioBlocked?'#ffb0b0':'#ffd87a','right');
     c.globalAlpha=.82;panel(18,H-116,126,54);txt('LEFT',81,H-82,12,'#d9e8ff','center');panel(154,H-116,126,54);txt('RIGHT',217,H-82,12,'#d9e8ff','center');panel(W-304,H-116,126,54);txt('JUMP',W-241,H-82,12,'#d9e8ff','center');panel(W-154,H-116,126,54);txt('ATK',W-91,H-82,12,'#d9e8ff','center');c.globalAlpha=1;}
   function wrap(s,x,y,maxW,lineH,size,col,align){c.fillStyle=col||'#fff';c.font=size+'px monospace';c.textAlign=align||'left';c.textBaseline='alphabetic';var words=String(s).split(' '),line='';for(var i=0;i<words.length;i++){var test=line?line+' '+words[i]:words[i];if(c.measureText(test).width>maxW&&line){c.fillText(line,x,y);line=words[i];y+=lineH;}else line=test;}if(line)c.fillText(line,x,y);return y;}
   function menu(){
@@ -309,13 +311,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v6",
-  name: "Dungeon Relic Rogue V6",
-  description: "A playability and art-direction repair pass for the NES-flavored roguelike platformer: held keyboard movement, real click-to-aim attacks, touch controls, class-specific sprites and weapons, dungeon masonry backgrounds, safe starts, five floors, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v7",
+  name: "Dungeon Relic Rogue V7",
+  description: "A playability, art, and audio repair pass for the NES-flavored roguelike platformer: held keyboard movement, real click-to-aim attacks, touch controls, class-specific sprites and weapons, dungeon masonry backgrounds, safe starts, synth dungeon background music, five floors, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 3 },
-    { moduleId: "glade-dungeon-rogue-update", version: 6 },
-    { moduleId: "glade-dungeon-rogue-render", version: 5 }
+    { moduleId: "glade-dungeon-rogue-update", version: 7 },
+    { moduleId: "glade-dungeon-rogue-render", version: 6 }
   ]
 });
