@@ -1,20 +1,20 @@
 {
-  "id": "glade-dungeon-relic-rogue-v10",
-  "name": "Dungeon Relic Rogue V10",
-  "description": "A louder combat, music, and pixel-art pass for the NES-flavored roguelike platformer: persistent synth backing bed, broader J/Z/X/click attack detection, longer visible attacks, animated directional monsters, aligned pixel spikes, blockier player/enemy/projectile art, double jump, transient floor title cards, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v11",
+  "name": "Dungeon Relic Rogue V11",
+  "description": "A controls and audio repair pass for the NES-flavored roguelike platformer: arrow movement, Space jump, S light attack, D heavy attack, finite looping synth melody instead of a drone, non-damaging exit doors between floors, animated directional monsters, pixel-art dungeon visuals, double jump, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dungeon-rogue-init",
-      "version": 4
+      "version": 5
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 10
+      "version": 11
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 8
+      "version": 9
     }
   ]
 }
