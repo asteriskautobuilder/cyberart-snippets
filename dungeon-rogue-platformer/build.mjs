@@ -13,7 +13,7 @@ const initCode = String.raw`
     drp:{
       w:960,h:540,screen:'class',frame:0,menuIndex:0,classIndex:0,weaponIndex:0,
       level:1,maxLevel:5,worldX:80,cameraX:0,y:330,vy:0,wid:34,hei:52,face:1,
-      hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,dead:false,won:false,
+      hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,dead:false,won:false,grace:0,
       atkTimer:0,invuln:0,onGround:false,shake:0,message:'Choose a class',
       className:'',weaponName:'',weaponTier:1,weaponKind:'',weaponRange:52,
       stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},
@@ -49,7 +49,7 @@ const updateCode = String.raw`
     ['magnet','magnet','#f7a8ff'],['vamp','lifesteal','#d24dff'],['regen','regen','#77ffbe'],['armor','defense','#b6c5d6'],['lantern','reveal','#ffd87a']
   ];
   var floorNames=['Crypt of Rust','Fungal Aqueduct','Ashen Library','Clockwork Catacomb','Obsidian Choir'];
-  function kset(){var o={};try{var a=keyboardManager&&keyboardManager.getPressedKeys?keyboardManager.getPressedKeys():[];for(var i=0;i<a.length;i++)o[String(a[i]).toLowerCase()]=true;}catch(e){}return o;}
+  function kset(){var o={};try{var a=keyboardManager&&keyboardManager.getPressedKeys?keyboardManager.getPressedKeys():[];for(var i=0;i<a.length;i++){var key=String(a[i]).toLowerCase();o[key]=true;if(key==='arrowleft')o.left=true;if(key==='arrowright')o.right=true;if(key==='arrowup')o.up=true;if(key==='arrowdown')o.down=true;}}catch(e){}return o;}
   var k=kset(),click=pointerManager&&pointerManager.consumeClick?pointerManager.consumeClick():null;
   function hit(rx,ry,rw,rh){return click&&click.x>=rx&&click.x<=rx+rw&&click.y>=ry&&click.y<=ry+rh;}
   var left=!!(k.arrowleft||k.left||k.a||hit(0,H-140,150,140));
@@ -68,17 +68,17 @@ const updateCode = String.raw`
   function levelLength(){return 2600+g.level*360;}
   function makeLevel(){
     en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;
-    g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.hp=Math.min(g.maxHp,g.hp+24+g.stats.wisdom*3);g.invuln=150;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';
+    g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.hp=Math.min(g.maxHp,g.hp+24+g.stats.wisdom*3);g.invuln=260;g.grace=260;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';
     var len=levelLength();
-    for(var x=280;x<len-260;x+=260+Math.floor(Math.random()*150)){
+    for(var x=420;x<len-260;x+=280+Math.floor(Math.random()*150)){
       var y=350-Math.floor(Math.random()*115),ww=110+Math.floor(Math.random()*100);
       plats.push({x:x,y:y,w:ww,h:18});
-      if(Math.random()<.45)haz.push({x:x+ww+60,y:FLOOR-20,w:54+Math.random()*70,h:20,type:'spikes'});
+      if(x>760&&Math.random()<.45)haz.push({x:x+ww+60,y:FLOOR-20,w:54+Math.random()*70,h:20,type:'spikes'});
     }
     var types=['rat','slime','bat','skel','cult','archer','knight','wisp'];
     for(var e=0;e<7+g.level*3;e++){
       var t=types[Math.min(types.length-1,Math.floor(Math.random()*(3+g.level)))];
-      spawnEnemy(t,760+e*(210+Math.random()*120),false);
+      spawnEnemy(t,1040+e*(230+Math.random()*130),false);
     }
     if(g.level>=g.maxLevel) spawnEnemy('boss',len-360,true);
     else en.push({type:'gate',x:len-110,y:FLOOR-82,w:54,h:82,hp:999,max:999,gate:true});
@@ -113,6 +113,8 @@ const updateCode = String.raw`
   if(g.y+g.hei>=FLOOR){g.y=FLOOR-g.hei;g.vy=0;g.onGround=true;}
   for(var p=0;p<plats.length;p++){var pl=plats[p];if(g.vy>=0&&g.worldX+g.wid>pl.x&&g.worldX<pl.x+pl.w&&g.y+g.hei>pl.y&&g.y+g.hei<pl.y+24){g.y=pl.y-g.hei;g.vy=0;g.onGround=true;}}
   g.cameraX=Math.max(g.cameraX,Math.min(g.worldX-210,levelLength()-W+70));
+  if(left||right||jump||attack)g.grace=Math.min(g.grace||0,90);
+  if(g.grace>0)g.grace--;
   if(g.invuln>0)g.invuln--; if(g.shake>0)g.shake*=.84;
   if(g.atkTimer>0)g.atkTimer--;
   if(attack&&!g.last.attack&&g.atkTimer<=0){
@@ -126,9 +128,9 @@ const updateCode = String.raw`
   }
   g.last={jump:jump,attack:attack,up:up,down:down,confirm:confirm};
 
-  var slow=g.buffs.clock?.48:1;
+  var slow=g.buffs.clock?.48:1, enemySleep=(g.grace||0)>0;
   for(var i=0;i<en.length;i++){
-    var e=en[i]; if(e.dead||e.gate)continue; e.timer+=slow; e.cd-=slow; var px=g.worldX-e.x;
+    var e=en[i]; if(e.dead||e.gate)continue; if(enemySleep){e.cd=Math.max(e.cd,36);continue;} e.timer+=slow; e.cd-=slow; var px=g.worldX-e.x;
     if(e.type==='bat'||e.type==='wisp'){e.y+=Math.sin(e.timer*.08)*1.7; e.x+=(px>0?1:-1)*(1.2+g.level*.08)*slow;}
     else if(e.type==='slime'){if(e.jump<=0&&Math.abs(px)<320){e.vy=-8-Math.random()*3;e.jump=80;} e.jump-=slow;}
     else if(e.type==='rat'){e.x+=(px>0?1:-1)*(1.7+g.level*.08)*slow;}
@@ -137,7 +139,7 @@ const updateCode = String.raw`
     e.vy=(e.vy||0)+GRAV; e.y+=e.vy; if(e.y+e.h>=FLOOR){e.y=FLOOR-e.h;e.vy=0;}
   }
   for(var hi=0;hi<haz.length;hi++){var hz=haz[hi];if(g.invuln<=0&&rect({x:g.worldX+6,y:g.y+6,w:g.wid-12,h:g.hei-8},hz)){damage(12+g.level*3);}}
-  function damage(d){if(g.invuln>0)return;var red=Math.min(.65,(g.stats.defense+(g.buffs.armor?5:0))*.055);var hit=Math.max(1,Math.floor(d*(1-red)));g.hp-=hit;g.invuln=g.buffs.shield?90:38;g.shake=9;sfx('hit');puff(g.worldX+g.wid/2,g.y+20,'#ff5577',12);if(g.hp<=0){g.hp=0;g.screen='dead';g.message='The dungeon keeps your bones.';}}
+  function damage(d){if(g.invuln>0||(g.grace||0)>0)return;var red=Math.min(.65,(g.stats.defense+(g.buffs.armor?5:0))*.055);var hit=Math.max(1,Math.floor(d*(1-red)));g.hp-=hit;g.invuln=g.buffs.shield?90:38;g.shake=9;sfx('hit');puff(g.worldX+g.wid/2,g.y+20,'#ff5577',12);if(g.hp<=0){g.hp=0;g.screen='dead';g.message='The dungeon keeps your bones.';}}
   function gainXp(v){v=Math.floor(v*(1+g.stats.wisdom*.05+(g.buffs.tome?.55:0)));g.xp+=v;while(g.xp>=g.nextXp){g.xp-=g.nextXp;g.nextXp=Math.floor(g.nextXp*1.34+18);g.statPoints++;g.screen='levelup';sfx('level');}}
   function dropAt(x,y,e){
     var chance=.35+g.stats.luck*.035;if(e.boss)chance=1;if(Math.random()<chance){var roll=Math.random(),kind='power';if(roll<.2)kind='weapon';else if(roll<.34)kind='upgrade';var pwr=powerDefs[Math.floor(Math.random()*powerDefs.length)];drops.push({x:x,y:y,w:24,h:24,kind:kind,power:pwr[0],color:pwr[2],label:kind==='weapon'?'weapon':kind==='upgrade'?'upgrade':pwr[0],life:900});}
@@ -210,7 +212,7 @@ const renderCode = String.raw`
     for(var r=0;r<parts.length;r++){var p=parts[r];c.globalAlpha=Math.max(0,p.life/40);c.fillStyle=p.c;c.fillRect(p.x,p.y,3,3);c.globalAlpha=1;}
     c.restore();for(var e=0;e<en.length;e++)drawEnemy(en[e]);drawPlayer();c.restore();
   }
-  function hud(){panel(14,12,320,70);txt('DUNGEON RELIC ROGUE',28,36,17,'#dffdf5');txt((levelNames[(g.level||1)-1]||'Dungeon')+'  '+g.level+'/'+g.maxLevel,28,60,12,'#f0d36b');var hpw=170;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(354,18,hpw,12);c.fillStyle='#ff5577';c.fillRect(354,18,hpw*Math.max(0,g.hp/g.maxHp),12);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,532,29,11,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(354,38,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(354,38,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,532,49,11,'#c8fbff');txt((g.className||'')+' / '+(g.weaponName||''),354,66,12,'#fff');panel(672,12,274,58);txt('MOVE A/D   JUMP W/SPACE',686,34,11,'#d9e8ff');txt('ATTACK J/X/Z or right pad',686,55,11,'#d9e8ff');txt(g.audioReady?'audio armed':'audio arms on attack',W-20,88,10,g.audioReady?'#8ef7ff':'#ffd87a','right');}
+  function hud(){panel(14,12,320,70);txt('DUNGEON RELIC ROGUE',28,36,17,'#dffdf5');txt((levelNames[(g.level||1)-1]||'Dungeon')+'  '+g.level+'/'+g.maxLevel,28,60,12,'#f0d36b');panel(350,12,250,70);var hpw=132;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,24,hpw,10);c.fillStyle='#ff5577';c.fillRect(368,24,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,512,34,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,46,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(368,46,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,512,55,10,'#c8fbff');txt((g.className||'')+' / '+(g.weaponName||''),368,72,10,'#fff');panel(632,12,314,70);txt('MOVE  A/D or ARROWS',650,34,10,'#d9e8ff');txt('JUMP  W/SPACE/UP',650,52,10,'#d9e8ff');txt('ATTACK  J/X/Z or CLICK',650,70,10,'#d9e8ff');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,112,15,'#8ef7ff','center');txt(g.audioReady?'audio armed':'audio arms on attack',W-20,104,9,g.audioReady?'#8ef7ff':'#ffd87a','right');}
   function menu(){
     var cls=classes[g.classIndex]||classes[0];background();panel(120,70,720,390);txt('DUNGEON RELIC ROGUE',W/2,118,30,'#f6f2ff','center');txt('A roguelike platformer under a dead mountain. Choose a class, take a relic weapon, clear five floors, silence the Obsidian Choir.',W/2,150,13,'#c8d6e8','center');
     if(g.screen==='class'){for(var i=0;i<classes.length;i++){var y=200+i*48,sel=i===g.menuIndex;c.fillStyle=sel?'rgba(142,247,255,.22)':'rgba(255,255,255,.05)';rr(190,y-26,580,36,7);c.fill();txt((sel?'> ':'  ')+classes[i].name,220,y,18,classes[i].color);txt(classes[i].desc,370,y,12,'#cbd7e6');}txt('UP/DOWN + ENTER/CLICK',W/2,430,13,'#ffd87a','center');}
@@ -247,13 +249,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue",
-  name: "Dungeon Relic Rogue",
-  description: "A compact NES-flavored roguelike platformer: choose warrior, mage, archer, or monk, pick a starting weapon, fight through five dungeon floors, level stats, collect class weapons and powerups, and beat the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v3",
+  name: "Dungeon Relic Rogue V3",
+  description: "A stability pass for the NES-flavored roguelike platformer: safe starts, cleaner HUD, reliable class/weapon selection, keyboard/touch controls, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
-    { moduleId: "glade-dungeon-rogue-init", version: 1 },
-    { moduleId: "glade-dungeon-rogue-update", version: 1 },
-    { moduleId: "glade-dungeon-rogue-render", version: 1 }
+    { moduleId: "glade-dungeon-rogue-init", version: 3 },
+    { moduleId: "glade-dungeon-rogue-update", version: 3 },
+    { moduleId: "glade-dungeon-rogue-render", version: 3 }
   ]
 });

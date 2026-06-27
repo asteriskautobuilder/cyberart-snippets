@@ -1,20 +1,20 @@
 {
-  "id": "glade-dungeon-relic-rogue",
-  "name": "Dungeon Relic Rogue",
-  "description": "A compact NES-flavored roguelike platformer: choose warrior, mage, archer, or monk, pick a starting weapon, fight through five dungeon floors, level stats, collect class weapons and powerups, and beat the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v3",
+  "name": "Dungeon Relic Rogue V3",
+  "description": "A stability pass for the NES-flavored roguelike platformer: safe starts, cleaner HUD, reliable class/weapon selection, keyboard/touch controls, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dungeon-rogue-init",
-      "version": 1
+      "version": 3
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 1
+      "version": 3
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 1
+      "version": 3
     }
   ]
 }
