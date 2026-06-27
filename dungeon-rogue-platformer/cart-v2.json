@@ -1,0 +1,20 @@
+{
+  "id": "glade-dungeon-relic-rogue-v2",
+  "name": "Dungeon Relic Rogue V2",
+  "description": "A hotfix pass for the NES-flavored roguelike platformer: reliable class/weapon selection, cleaner HUD layout, keyboard plus touch controls, a safer opening stretch, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
+  "frameRate": 60,
+  "modules": [
+    {
+      "moduleId": "glade-dungeon-rogue-init",
+      "version": 2
+    },
+    {
+      "moduleId": "glade-dungeon-rogue-update",
+      "version": 2
+    },
+    {
+      "moduleId": "glade-dungeon-rogue-render",
+      "version": 2
+    }
+  ]
+}
