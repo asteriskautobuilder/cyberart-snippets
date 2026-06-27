@@ -49,8 +49,8 @@ const updateCode = String.raw`
     ['magnet','magnet','#f7a8ff'],['vamp','lifesteal','#d24dff'],['regen','regen','#77ffbe'],['armor','defense','#b6c5d6'],['lantern','reveal','#ffd87a']
   ];
   var floorNames=['Crypt of Rust','Fungal Aqueduct','Ashen Library','Clockwork Catacomb','Obsidian Choir'];
-  function keyName(v){if(v==null)return '';if(typeof v==='object')v=v.key||v.code||v.name||v.value||'';var s=String(v).toLowerCase();if(s===' ')return 'space';if(s.indexOf('arrow')===0)return s.replace(/[^a-z0-9]/g,'');if(s.indexOf('key')===0&&s.length===4)return s.slice(3);return s.replace(/[^a-z0-9]/g,'');}
-  function markKey(o,key){if(!key)return;o[key]=true;if(key==='arrowleft'||key==='left')o.left=true;if(key==='arrowright'||key==='right')o.right=true;if(key==='arrowup'||key==='up')o.up=true;if(key==='arrowdown'||key==='down')o.down=true;if(key==='space'||key==='spacebar')o.space=true;if(key==='enter'||key==='return')o.enter=true;if(key==='escape'||key==='esc')o.escape=true;}
+  function keyName(v){if(v==null)return '';if(typeof v==='object')v=v.key||v.code||v.name||v.value||'';return String(v).toLowerCase();}
+  function markKey(o,v){var raw=keyName(v);if(!raw)return;o[raw]=true;var key=raw.replace(/[^a-z0-9]/g,'');if(raw===' '||key==='space'||key==='spacebar')o.space=true;if(key==='arrowleft'||key==='left'||key==='keya'||key==='a')o.left=o.a=true;if(key==='arrowright'||key==='right'||key==='keyd'||key==='d')o.right=o.d=true;if(key==='arrowup'||key==='up'||key==='keyw'||key==='w')o.up=o.w=true;if(key==='arrowdown'||key==='down'||key==='keys'||key==='s')o.down=o.s=true;if(key==='keyj'||key==='j')o.j=true;if(key==='keyx'||key==='x')o.x=true;if(key==='keyz'||key==='z')o.z=true;if(key==='enter'||key==='return')o.enter=true;if(key==='escape'||key==='esc')o.escape=true;}
   function addKeys(o,src){
     if(!src)return;
     if(Array.isArray(src)){for(var i=0;i<src.length;i++)markKey(o,keyName(src[i]));return;}
@@ -79,7 +79,8 @@ const updateCode = String.raw`
       if(pointerManager.getPointer) p=pointerManager.getPointer();
       else if(pointerManager.getPointerPosition) p=pointerManager.getPointerPosition();
       else p=pointerManager.pointer||pointerManager.current||pointerManager.position||pointerManager.mouse||null;
-      down=!!(pointerManager.isDown||pointerManager.pointerDown||pointerManager.down||pointerManager.pressed||(p&&(p.isDown||p.down||p.pressed)));
+      function truth(obj,name){var v=obj&&obj[name];if(typeof v==='function'){try{return !!v.call(obj);}catch(e){return false;}}return !!v;}
+      down=!!(truth(pointerManager,'isDown')||truth(pointerManager,'pointerDown')||truth(pointerManager,'down')||truth(pointerManager,'pressed')||(p&&(truth(p,'isDown')||truth(p,'down')||truth(p,'pressed'))));
       if(pointerManager.isPointerDown) down=!!pointerManager.isPointerDown();
       if(pointerManager.isPressed) down=!!pointerManager.isPressed();
       return down?normPoint(p):null;
@@ -89,9 +90,9 @@ const updateCode = String.raw`
   function hit(rx,ry,rw,rh){return hitPt(click,rx,ry,rw,rh);}
   var left=!!(k.arrowleft||k.left||k.a||hitPt(held,0,H-140,150,140));
   var right=!!(k.arrowright||k.right||k.d||hitPt(held,150,H-140,170,140));
-  var jump=!!(k.space||k.spacebar||k.arrowup||k.up||k.w||hitPt(held,W-320,H-140,150,140)||hit(W-320,H-140,150,140));
+  var jump=!!(k.space||k.spacebar||k.arrowup||k.up||k.w||hitPt(held,W-320,H-140,150,140));
   var aimClick=click&&g.screen==='play';
-  var attack=!!(k.j||k.x||k.z||k.enter||hitPt(held,W-160,H-140,160,140)||hit(W-160,H-140,160,140)||aimClick);
+  var attack=!!(k.j||k.x||k.z||k.enter||hitPt(held,W-160,H-140,160,140)||aimClick);
   var up=!!(k.arrowup||k.up||k.w),down=!!(k.arrowdown||k.down||k.s),confirm=!!(k.enter||k.return||k.space||k.spacebar),back=!!(k.escape||k.esc);
 
   function armAudio(){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx){g.audioBlocked=true;return null;}var ac=root.__drpAudio||(root.__drpAudio=new Ctx());if(ac.state==='suspended'&&ac.resume)ac.resume();g.audioReady=ac.state!=='suspended';g.audioBlocked=!g.audioReady;return ac;}catch(e){g.audioBlocked=true;return null;}}
@@ -311,13 +312,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v7",
-  name: "Dungeon Relic Rogue V7",
-  description: "A playability, art, and audio repair pass for the NES-flavored roguelike platformer: held keyboard movement, real click-to-aim attacks, touch controls, class-specific sprites and weapons, dungeon masonry backgrounds, safe starts, synth dungeon background music, five floors, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v8",
+  name: "Dungeon Relic Rogue V8",
+  description: "A keyboard and pointer repair pass for the NES-flavored roguelike platformer: runner-style getPressedKeys controls, held keyboard movement, real click-to-aim attacks without accidental floor jumps, touch controls, class-specific sprites and weapons, dungeon masonry backgrounds, safe starts, synth dungeon background music, five floors, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 3 },
-    { moduleId: "glade-dungeon-rogue-update", version: 7 },
+    { moduleId: "glade-dungeon-rogue-update", version: 8 },
     { moduleId: "glade-dungeon-rogue-render", version: 6 }
   ]
 });
