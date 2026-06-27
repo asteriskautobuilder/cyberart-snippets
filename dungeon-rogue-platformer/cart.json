@@ -1,7 +1,7 @@
 {
-  "id": "glade-dungeon-relic-rogue-v4",
-  "name": "Dungeon Relic Rogue V4",
-  "description": "A touch-control stability pass for the NES-flavored roguelike platformer: normalized pointer input, held movement zones, safe starts, cleaner HUD, reliable class/weapon selection, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v5",
+  "name": "Dungeon Relic Rogue V5",
+  "description": "A first-interaction stability pass for the NES-flavored roguelike platformer: robust keyboard menu input, wrapped class-select text, normalized pointer input, safe starts, cleaner HUD, reliable class/weapon selection, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
@@ -10,11 +10,11 @@
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 4
+      "version": 5
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 3
+      "version": 4
     }
   ]
 }

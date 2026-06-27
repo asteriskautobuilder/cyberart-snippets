@@ -49,7 +49,9 @@ const updateCode = String.raw`
     ['magnet','magnet','#f7a8ff'],['vamp','lifesteal','#d24dff'],['regen','regen','#77ffbe'],['armor','defense','#b6c5d6'],['lantern','reveal','#ffd87a']
   ];
   var floorNames=['Crypt of Rust','Fungal Aqueduct','Ashen Library','Clockwork Catacomb','Obsidian Choir'];
-  function kset(){var o={};try{var a=keyboardManager&&keyboardManager.getPressedKeys?keyboardManager.getPressedKeys():[];for(var i=0;i<a.length;i++){var key=String(a[i]).toLowerCase();o[key]=true;if(key==='arrowleft')o.left=true;if(key==='arrowright')o.right=true;if(key==='arrowup')o.up=true;if(key==='arrowdown')o.down=true;}}catch(e){}return o;}
+  function keyName(v){if(v==null)return '';if(typeof v==='object')v=v.key||v.code||v.name||v.value||'';return String(v).toLowerCase().replace(/^key/,'').replace(/^arrow/,'arrow').replace(/[^a-z0-9 ]/g,'');}
+  function markKey(o,key){if(!key)return;o[key]=true;if(key==='arrowleft'||key==='left')o.left=true;if(key==='arrowright'||key==='right')o.right=true;if(key==='arrowup'||key==='up')o.up=true;if(key==='arrowdown'||key==='down')o.down=true;if(key===' '||key==='space'||key==='spacebar')o.space=true;if(key==='enter'||key==='return')o.enter=true;}
+  function kset(){var o={};try{var km=keyboardManager;if(!km)return o;var lists=[];if(km.getPressedKeys)lists.push(km.getPressedKeys());if(km.getKeysDown)lists.push(km.getKeysDown());if(km.pressedKeys)lists.push(km.pressedKeys);if(km.keysDown)lists.push(km.keysDown);if(km.keys)lists.push(km.keys);for(var l=0;l<lists.length;l++){var a=lists[l]||[];if(!Array.isArray(a)&&typeof a==='object')a=Object.keys(a).filter(function(k){return !!lists[l][k];});for(var i=0;i<a.length;i++)markKey(o,keyName(a[i]));}var names=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Up','Down','Left','Right','w','a','s','d','j','x','z','Enter','Return','Space',' '];for(var n=0;n<names.length;n++){var raw=names[n],down=false;if(km.isKeyDown)down=down||!!km.isKeyDown(raw);if(km.isPressed)down=down||!!km.isPressed(raw);if(km.isKeyPressed)down=down||!!km.isKeyPressed(raw);if(km.getKey)down=down||!!km.getKey(raw);if(down)markKey(o,keyName(raw));}}catch(e){}return o;}
   function normPoint(p){
     if(!p)return null;var x=typeof p.x==='number'?p.x:(typeof p.clientX==='number'?p.clientX:NaN),y=typeof p.y==='number'?p.y:(typeof p.clientY==='number'?p.clientY:NaN);
     if(!isFinite(x)||!isFinite(y))return null;
@@ -108,7 +110,7 @@ const updateCode = String.raw`
   }
   function start(){g.classIndex=Math.max(0,Math.min(classes.length-1,g.classIndex|0));g.weaponIndex=Math.max(0,Math.min(1,g.weaponIndex|0));applyClass();g.level=1;g.screen='play';g.dead=false;g.won=false;g.last={};makeLevel();sfx('select');}
   function chooseMenu(max){if(up&&!g.last.up){g.menuIndex=(g.menuIndex+max-1)%max;sfx('select');}if(down&&!g.last.down){g.menuIndex=(g.menuIndex+1)%max;sfx('select');}}
-  function clickedClass(){if(!click)return -1;for(var i=0;i<classes.length;i++){var y=200+i*48;if(hit(190,y-26,580,36))return i;}return -1;}
+  function clickedClass(){if(!click)return -1;for(var i=0;i<classes.length;i++){var y=206+i*48;if(hit(150,y-26,660,36))return i;}return -1;}
   function clickedWeapon(){if(!click)return -1;for(var i=0;i<2;i++){var y=250+i*58;if(hit(250,y-31,460,42))return i;}return -1;}
   function clickedStat(){if(!click)return -1;for(var i=0;i<stats.length;i++){var y=170+i*38;if(hit(236,y-24,488,30))return i;}return -1;}
 
@@ -231,9 +233,10 @@ const renderCode = String.raw`
     c.restore();for(var e=0;e<en.length;e++)drawEnemy(en[e]);drawPlayer();c.restore();
   }
   function hud(){panel(14,12,320,70);txt('DUNGEON RELIC ROGUE',28,36,17,'#dffdf5');txt((levelNames[(g.level||1)-1]||'Dungeon')+'  '+g.level+'/'+g.maxLevel,28,60,12,'#f0d36b');panel(350,12,250,70);var hpw=132;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,24,hpw,10);c.fillStyle='#ff5577';c.fillRect(368,24,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,512,34,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(368,46,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(368,46,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,512,55,10,'#c8fbff');txt((g.className||'')+' / '+(g.weaponName||''),368,72,10,'#fff');panel(632,12,314,70);txt('MOVE  A/D or ARROWS',650,34,10,'#d9e8ff');txt('JUMP  W/SPACE/UP',650,52,10,'#d9e8ff');txt('ATTACK  J/X/Z or CLICK',650,70,10,'#d9e8ff');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,112,15,'#8ef7ff','center');txt(g.audioReady?'audio armed':'audio arms on attack',W-20,104,9,g.audioReady?'#8ef7ff':'#ffd87a','right');}
+  function wrap(s,x,y,maxW,lineH,size,col,align){c.fillStyle=col||'#fff';c.font=size+'px monospace';c.textAlign=align||'left';c.textBaseline='alphabetic';var words=String(s).split(' '),line='';for(var i=0;i<words.length;i++){var test=line?line+' '+words[i]:words[i];if(c.measureText(test).width>maxW&&line){c.fillText(line,x,y);line=words[i];y+=lineH;}else line=test;}if(line)c.fillText(line,x,y);return y;}
   function menu(){
-    var cls=classes[g.classIndex]||classes[0];background();panel(120,70,720,390);txt('DUNGEON RELIC ROGUE',W/2,118,30,'#f6f2ff','center');txt('A roguelike platformer under a dead mountain. Choose a class, take a relic weapon, clear five floors, silence the Obsidian Choir.',W/2,150,13,'#c8d6e8','center');
-    if(g.screen==='class'){for(var i=0;i<classes.length;i++){var y=200+i*48,sel=i===g.menuIndex;c.fillStyle=sel?'rgba(142,247,255,.22)':'rgba(255,255,255,.05)';rr(190,y-26,580,36,7);c.fill();txt((sel?'> ':'  ')+classes[i].name,220,y,18,classes[i].color);txt(classes[i].desc,370,y,12,'#cbd7e6');}txt('UP/DOWN + ENTER/CLICK',W/2,430,13,'#ffd87a','center');}
+    var cls=classes[g.classIndex]||classes[0];background();panel(80,68,800,398);txt('DUNGEON RELIC ROGUE',W/2,116,30,'#f6f2ff','center');wrap('A roguelike platformer under a dead mountain. Choose a class, take a relic weapon, clear five floors, silence the Obsidian Choir.',W/2,146,730,18,13,'#c8d6e8','center');
+    if(g.screen==='class'){for(var i=0;i<classes.length;i++){var y=206+i*48,sel=i===g.menuIndex;c.fillStyle=sel?'rgba(142,247,255,.22)':'rgba(255,255,255,.05)';rr(150,y-26,660,36,7);c.fill();txt((sel?'> ':'  ')+classes[i].name,182,y,18,classes[i].color);txt(classes[i].desc,350,y,12,'#cbd7e6');}txt('UP/DOWN + ENTER/CLICK',W/2,438,13,'#ffd87a','center');}
     if(g.screen==='weapon'){txt(cls.name+' starting weapon',W/2,194,20,cls.color,'center');for(var j=0;j<2;j++){var yy=250+j*58,ss=j===g.menuIndex;c.fillStyle=ss?'rgba(142,247,255,.22)':'rgba(255,255,255,.05)';rr(250,yy-31,460,42,8);c.fill();txt((ss?'> ':'  ')+cls.weapons[j],W/2,yy,18,'#fff','center');}txt('ESC back   ENTER/CLICK start',W/2,410,13,'#ffd87a','center');}
   }
   function levelUp(){drawWorld();c.fillStyle='rgba(0,0,0,.72)';c.fillRect(0,0,W,H);panel(190,74,580,398);txt('LEVEL UP: choose a stat',W/2,122,24,'#fff','center');for(var i=0;i<stats.length;i++){var st=stats[i],y=170+i*38,sel=i===g.menuIndex;c.fillStyle=sel?'rgba(240,211,107,.23)':'rgba(255,255,255,.05)';rr(236,y-24,488,30,6);c.fill();txt((sel?'> ':'  ')+st.toUpperCase()+'  '+(g.stats[st]||0),258,y,16,'#f0d36b');txt(statText[st],456,y,12,'#cdd8e5');}txt('points: '+g.statPoints,W/2,455,14,'#8ef7ff','center');}
@@ -267,13 +270,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v4",
-  name: "Dungeon Relic Rogue V4",
-  description: "A touch-control stability pass for the NES-flavored roguelike platformer: normalized pointer input, held movement zones, safe starts, cleaner HUD, reliable class/weapon selection, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v5",
+  name: "Dungeon Relic Rogue V5",
+  description: "A first-interaction stability pass for the NES-flavored roguelike platformer: robust keyboard menu input, wrapped class-select text, normalized pointer input, safe starts, cleaner HUD, reliable class/weapon selection, five dungeon floors, XP/stat leveling, class drops, powerups, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 3 },
-    { moduleId: "glade-dungeon-rogue-update", version: 4 },
-    { moduleId: "glade-dungeon-rogue-render", version: 3 }
+    { moduleId: "glade-dungeon-rogue-update", version: 5 },
+    { moduleId: "glade-dungeon-rogue-render", version: 4 }
   ]
 });
