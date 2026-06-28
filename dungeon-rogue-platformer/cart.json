@@ -1,20 +1,20 @@
 {
-  "id": "glade-dungeon-relic-rogue-v15",
-  "name": "Dungeon Relic Rogue V15",
-  "description": "A traversal-rules pass for the NES-flavored roguelike platformer: real pit spans, lowered pit spikes, grounded foes and drops that respect safe surfaces, large semi-solid blocks, drop-through platforms, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v16",
+  "name": "Dungeon Relic Rogue V16",
+  "description": "A mobility pass for the NES-flavored roguelike platformer: climbable ropes, rope jump-offs, double-tap dash with cooldown, real pit spans, grounded foes and drops that respect safe surfaces, large semi-solid blocks, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dungeon-rogue-init",
-      "version": 7
+      "version": 8
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 15
+      "version": 16
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 12
+      "version": 13
     }
   ]
 }
