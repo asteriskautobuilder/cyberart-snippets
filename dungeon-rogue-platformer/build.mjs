@@ -37,6 +37,12 @@ const updateCode = String.raw`
   if(!state.drpPlatforms) state.drpPlatforms=[];
   if(!state.drpHazards) state.drpHazards=[];
   var g=state.drp,en=state.drpEnemies,pr=state.drpProjectiles,drops=state.drpDrops,parts=state.drpParticles,plats=state.drpPlatforms,haz=state.drpHazards;
+  function saneNum(v,d){return typeof v==='number'&&isFinite(v)?v:d;}
+  g.atkTimer=saneNum(g.atkTimer,0);g.atkAnim=saneNum(g.atkAnim,0);g.atkSeq=saneNum(g.atkSeq,0);
+  g.musicTick=saneNum(g.musicTick,0);g.musicStep=saneNum(g.musicStep,0);g.musicBar=saneNum(g.musicBar,0);g.musicNotes=saneNum(g.musicNotes,0);
+  g.invuln=saneNum(g.invuln,0);g.grace=saneNum(g.grace,0);g.shake=saneNum(g.shake,0);g.levelTitle=saneNum(g.levelTitle,0);
+  g.maxJumps=saneNum(g.maxJumps,2);g.jumpsLeft=saneNum(g.jumpsLeft,0);g.weaponTier=saneNum(g.weaponTier,1);g.weaponRange=saneNum(g.weaponRange,52);
+  if(!g.last)g.last={};if(!g.buffs)g.buffs={};if(!g.stats)g.stats={attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1};
 
   var classes=[
     {name:'Warrior',color:'#e85d75',hp:132,stats:{attack:3,defense:3,dexterity:1,intelligence:0,wisdom:1,luck:1,hp:3},weapons:[['Iron Cleaver','melee',64,17,24,'cleaver'],['Bulwark Axe','melee',54,24,34,'axe']]},
@@ -60,14 +66,23 @@ const updateCode = String.raw`
     if(typeof Map!=='undefined'&&src instanceof Map){src.forEach(function(v,k){if(v)markKey(o,keyName(k));});return;}
     if(typeof src==='object'){for(var k in src){if(src[k])markKey(o,keyName(k));}}
   }
+  function unlockAudioNow(){
+    try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!root||!Ctx)return null;var ac=root.__drpAudio||(root.__drpAudio=new Ctx());root.__drpAudioGesture=true;if(ac.state==='suspended'&&ac.resume){var p=ac.resume();if(p&&p.then)p.then(function(){root.__drpAudioUnlocked=true;}).catch(function(){root.__drpAudioBlocked=true;});}
+      if(!root.__drpAudioPrimed){root.__drpAudioPrimed=true;try{var o=ac.createOscillator(),gn=ac.createGain();gn.gain.setValueAtTime(0.00001,ac.currentTime);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+.03);}catch(e){}}
+      if(ac.state!=='suspended')root.__drpAudioUnlocked=true;return ac;}catch(e){try{((typeof window!=='undefined')?window:globalThis).__drpAudioBlocked=true;}catch(_){}return null;}
+  }
   function installKeyFallback(){
-    try{var root=(typeof window!=='undefined')?window:globalThis;if(!root||root.__drpKeyFallback)return;root.__drpKeyFallback={};
-      var down=function(e){root.__drpKeyFallback[keyName(e.key)]=true;root.__drpKeyFallback[keyName(e.code)]=true;};
-      var up=function(e){root.__drpKeyFallback[keyName(e.key)]=false;root.__drpKeyFallback[keyName(e.code)]=false;};
-      if(root.addEventListener){root.addEventListener('keydown',down);root.addEventListener('keyup',up);root.addEventListener('blur',function(){root.__drpKeyFallback={};});}
+    try{var root=(typeof window!=='undefined')?window:globalThis;if(!root)return;if(!root.__drpKeyFallback)root.__drpKeyFallback={down:{},pressed:{}};
+      if(root.__drpInputFallbackInstalled)return;root.__drpInputFallbackInstalled=true;
+      var store=root.__drpKeyFallback;
+      function setKey(e,isDown){var names=[keyName(e&&e.key),keyName(e&&e.code)];for(var i=0;i<names.length;i++){var n=names[i];if(!n)continue;store.down[n]=isDown;if(isDown)store.pressed[n]=(store.pressed[n]||0)+1;}}
+      var down=function(e){setKey(e,true);unlockAudioNow();};
+      var up=function(e){setKey(e,false);};
+      var gesture=function(){unlockAudioNow();};
+      if(root.addEventListener){root.addEventListener('keydown',down,true);root.addEventListener('keyup',up,true);root.addEventListener('pointerdown',gesture,true);root.addEventListener('mousedown',gesture,true);root.addEventListener('touchstart',gesture,true);root.addEventListener('blur',function(){root.__drpKeyFallback={down:{},pressed:{}};store=root.__drpKeyFallback;});}
     }catch(e){}
   }
-  function kset(){var o={};installKeyFallback();try{var root=(typeof window!=='undefined')?window:globalThis;if(root&&root.__drpKeyFallback)addKeys(o,root.__drpKeyFallback);}catch(e){}
+  function kset(){var o={};installKeyFallback();try{var root=(typeof window!=='undefined')?window:globalThis,fb=root&&root.__drpKeyFallback;if(fb){if(fb.down||fb.pressed){addKeys(o,fb.down);for(var pk in fb.pressed){if(fb.pressed[pk]>0){var clean=String(pk).toLowerCase().replace(/[^a-z0-9]/g,'');markKey(o,pk);if(clean==='s'||clean==='keys')o.lightPressed=true;if(clean==='d'||clean==='keyd')o.heavyPressed=true;if(clean==='space'||clean==='spacebar')o.jumpPressed=true;fb.pressed[pk]--;if(fb.pressed[pk]<=0)delete fb.pressed[pk];}}}else addKeys(o,fb);}}catch(e){}
     try{var km=keyboardManager;if(!km)return o;var lists=[];if(km.getPressedKeys)lists.push(km.getPressedKeys());if(km.getKeysDown)lists.push(km.getKeysDown());if(km.getHeldKeys)lists.push(km.getHeldKeys());if(km.pressedKeys)lists.push(km.pressedKeys);if(km.keysDown)lists.push(km.keysDown);if(km.heldKeys)lists.push(km.heldKeys);if(km.downKeys)lists.push(km.downKeys);if(km.keys)lists.push(km.keys);if(km.keyStates)lists.push(km.keyStates);for(var l=0;l<lists.length;l++)addKeys(o,lists[l]);var names=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Up','Down','Left','Right','KeyS','KeyD','s','d','Enter','Return','Space',' '];for(var n=0;n<names.length;n++){var raw=names[n],down=false;if(km.isKeyDown)down=down||!!km.isKeyDown(raw);if(km.isDown)down=down||!!km.isDown(raw);if(km.isPressed)down=down||!!km.isPressed(raw);if(km.isKeyPressed)down=down||!!km.isKeyPressed(raw);if(km.getKey)down=down||!!km.getKey(raw);if(down)markKey(o,keyName(raw));}}catch(e){}return o;}
   function normPoint(p){
     if(!p)return null;var x=typeof p.x==='number'?p.x:(typeof p.clientX==='number'?p.clientX:NaN),y=typeof p.y==='number'?p.y:(typeof p.clientY==='number'?p.clientY:NaN);
@@ -95,12 +110,11 @@ const updateCode = String.raw`
   var jump=!!(k.space||k.spacebar);
   var aimPoint=click||(g.screen==='play'?held:null);
   var aimClick=aimPoint&&g.screen==='play';
-  var lightAttack=!!k.light,heavyAttack=!!k.heavy,attack=!!(lightAttack||heavyAttack||aimClick),attackHeavy=!!(heavyAttack&&!lightAttack);
+  var lightAttack=!!k.light,heavyAttack=!!k.heavy,lightPressed=!!k.lightPressed,heavyPressed=!!k.heavyPressed,attack=!!(lightAttack||heavyAttack||lightPressed||heavyPressed||aimClick),attackEdge=!!(lightPressed||heavyPressed||(attack&&!g.last.attack)),attackHeavy=!!((heavyAttack||heavyPressed)&&!(lightAttack||lightPressed));
   var up=!!(k.arrowup||k.up),down=!!(k.arrowdown||k.down),confirm=!!(k.enter||k.return||k.space||k.spacebar),back=!!(k.escape||k.esc);
 
-  function armAudio(){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx){g.audioBlocked=true;return null;}var ac=root.__drpAudio||(root.__drpAudio=new Ctx());g.audioArmed=true;if(ac.state==='suspended'&&ac.resume){var p=ac.resume();if(p&&p.then)p.then(function(){root.__drpAudioUnlocked=true;}).catch(function(){g.audioBlocked=true;});}
-    if(!root.__drpAudioPrimed){root.__drpAudioPrimed=true;try{var o=ac.createOscillator(),gn=ac.createGain();gn.gain.setValueAtTime(0.00001,ac.currentTime);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+.03);}catch(e){}}
-    g.audioReady=ac.state!=='suspended'||!!root.__drpAudioUnlocked;g.audioBlocked=!g.audioReady;return ac;}catch(e){g.audioBlocked=true;return null;}}
+  function armAudio(){try{var root=(typeof window!=='undefined')?window:globalThis,Ctx=root.AudioContext||root.webkitAudioContext;if(!Ctx){g.audioBlocked=true;return null;}var ac=root.__drpAudio||unlockAudioNow()||(root.__drpAudio=new Ctx());g.audioArmed=true;if(root.__drpAudioGesture&&ac.state==='suspended'&&ac.resume){var p=ac.resume();if(p&&p.then)p.then(function(){root.__drpAudioUnlocked=true;}).catch(function(){root.__drpAudioBlocked=true;});}
+    g.audioReady=ac.state!=='suspended'||!!root.__drpAudioUnlocked;g.audioBlocked=!!root.__drpAudioBlocked&&!g.audioReady;return ac;}catch(e){g.audioBlocked=true;return null;}}
   function audioLive(ac){try{var root=(typeof window!=='undefined')?window:globalThis;return !!ac&&(ac.state!=='suspended'||!!root.__drpAudioUnlocked);}catch(e){return !!ac&&g.audioReady;}}
   function snd(freq,dur,type,gain){try{var ac=armAudio();if(!audioLive(ac))return;g.audioReady=true;g.audioBlocked=false;var o=ac.createOscillator(),gn=ac.createGain();o.type=type||'square';o.frequency.value=freq;gn.gain.setValueAtTime(gain||0.035,ac.currentTime);gn.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+dur);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+dur);}catch(e){g.audioBlocked=true;}}
   function sfx(n){if(n==='hit'){snd(92,.16,'sawtooth',.06);snd(54,.22,'square',.03);}else if(n==='impact'){snd(132,.04,'square',.025);}else if(n==='cleaver'){snd(180,.05,'sawtooth',.045);snd(82,.08,'square',.025);}else if(n==='axe'){snd(120,.08,'sawtooth',.055);snd(64,.13,'square',.035);}else if(n==='knives'){snd(420,.035,'triangle',.035);snd(520,.04,'triangle',.025);}else if(n==='staff'){snd(260,.06,'square',.035);snd(180,.08,'triangle',.02);}else if(n==='ember'){snd(330,.05,'sawtooth',.035);snd(660,.06,'triangle',.02);}else if(n==='frost'){snd(520,.07,'sine',.03);snd(880,.05,'triangle',.018);}else if(n==='arrow'){snd(360,.035,'triangle',.03);snd(160,.05,'square',.012);}else if(n==='chi'){snd(240,.045,'sine',.035);snd(720,.08,'triangle',.022);}else if(n==='atk'){snd(220,.05,'square',.035);snd(440,.05,'triangle',.02);}else if(n==='drop'){snd(620,.06,'triangle',.035);snd(920,.08,'sine',.025);}else if(n==='level'){snd(330,.07,'square',.04);snd(660,.1,'triangle',.04);snd(990,.12,'sine',.025);}else if(n==='select'){snd(300,.04,'square',.025);}else if(n==='boss'){snd(80,.26,'sawtooth',.08);}}
@@ -164,7 +178,8 @@ const updateCode = String.raw`
   if(g.grace>0)g.grace--; if(g.levelTitle>0)g.levelTitle--;
   if(g.invuln>0)g.invuln--; if(g.shake>0)g.shake*=.84;
   if(g.atkTimer>0)g.atkTimer--; if(g.atkAnim>0)g.atkAnim--;
-  if(attack&&!g.last.attack&&g.atkTimer<=0){
+  if(attack&&g.atkTimer<=0){
+    g.attackEntered=(g.attackEntered||0)+1;
     var cls=classes[g.classIndex],wp=cls.weapons[g.weaponIndex],cool=Math.max(12,wp[4]-g.stats.dexterity*1.5-(g.buffs.focus?7:0));
     if(attackHeavy)cool=Math.ceil(cool*1.35);
     var style=wp[5]||g.weaponKind;g.atkTimer=cool;g.atkAnim=attackHeavy?24:18;g.attackStyle=style;g.attackHeavy=attackHeavy;g.atkSeq=(g.atkSeq||0)+1;sfx(style);
@@ -214,6 +229,7 @@ const updateCode = String.raw`
   for(var pa=0;pa<parts.length;pa++){var pp=parts[pa];pp.x+=pp.vx;pp.y+=pp.vy;pp.vy+=.15;pp.life--;}for(var pp2=parts.length-1;pp2>=0;pp2--)if(parts[pp2].life<=0)parts.splice(pp2,1);
   if(g.exitOpen&&g.worldX+g.wid>g.exitX+18&&g.level<g.maxLevel){g.level++;makeLevel();sfx('level');}
 
+  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,enemies:en.map(function(e){return {type:e.type,x:Math.round(e.x),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen};}catch(e){}
   state.drp=g;state.drpEnemies=en;state.drpProjectiles=pr;state.drpDrops=drops;state.drpParticles=parts;state.drpPlatforms=plats;state.drpHazards=haz;return state;
 })();
 `;
@@ -341,13 +357,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v11",
-  name: "Dungeon Relic Rogue V11",
-  description: "A controls and audio repair pass for the NES-flavored roguelike platformer: arrow movement, Space jump, S light attack, D heavy attack, finite looping synth melody instead of a drone, non-damaging exit doors between floors, animated directional monsters, pixel-art dungeon visuals, double jump, XP/stat leveling, drops, powerups, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v12",
+  name: "Dungeon Relic Rogue V12",
+  description: "A real browser input repair pass for the NES-flavored roguelike platformer: queued S/D attack taps, arrow movement, Space jump, user-gesture audio unlock, finite synth music, exit doors, animated monsters, pixel-art dungeon visuals, double jump, XP/stat leveling, drops, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 5 },
-    { moduleId: "glade-dungeon-rogue-update", version: 11 },
+    { moduleId: "glade-dungeon-rogue-update", version: 12 },
     { moduleId: "glade-dungeon-rogue-render", version: 9 }
   ]
 });
