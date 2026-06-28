@@ -1,7 +1,7 @@
 {
-  "id": "glade-dungeon-relic-rogue-v17",
-  "name": "Dungeon Relic Rogue V17",
-  "description": "A level-generation pass for the NES-flavored roguelike platformer: longer profile-driven floors with distinct vertical character, stacked/high platform encounters, raised block structures, ropes, pits, hazards, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v18",
+  "name": "Dungeon Relic Rogue V18",
+  "description": "An art and audio polish pass for the NES-flavored roguelike platformer: potion health pickups, glimmering green XP crystals with size variation, more detailed pixel sprites and world surfaces, and level-layered dungeon synth music.",
   "frameRate": 60,
   "modules": [
     {
@@ -10,11 +10,11 @@
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 17
+      "version": 18
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 13
+      "version": 14
     }
   ]
 }
