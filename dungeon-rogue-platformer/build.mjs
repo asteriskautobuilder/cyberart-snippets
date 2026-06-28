@@ -14,14 +14,14 @@ const initCode = String.raw`
       w:960,h:540,screen:'class',frame:0,menuIndex:0,classIndex:0,weaponIndex:0,
       level:1,maxLevel:5,worldX:80,cameraX:0,y:330,vy:0,wid:34,hei:52,face:1,
       hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,dead:false,won:false,grace:0,
-      atkTimer:0,atkAnim:0,atkSeq:0,invuln:0,onGround:false,jumpsLeft:0,maxJumps:2,shake:0,message:'Choose a class',
+      atkTimer:0,atkAnim:0,atkSeq:0,invuln:0,onGround:false,onPlatformIndex:-1,dropTimer:0,dropPlatformIndex:-1,jumpsLeft:0,maxJumps:2,shake:0,message:'Choose a class',
       className:'',weaponName:'',weaponTier:1,weaponKind:'',weaponRange:52,
       attackStyle:'cleaver',levelTitle:0,levelTitleText:'',transitionTimer:0,transitionFrom:0,transitionTo:0,transitionText:'',levelHeal:0,damageFlash:0,
       stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},
       buffs:{},last:{},audioReady:false,audioBlocked:false,audioArmed:false,musicTick:0,musicStep:0,musicBar:0,
       exitX:0,exitY:0,exitW:0,exitH:0,exitOpen:false
     },
-    drpEnemies:[],drpProjectiles:[],drpDrops:[],drpParticles:[],drpPlatforms:[],drpHazards:[]
+    drpEnemies:[],drpProjectiles:[],drpDrops:[],drpParticles:[],drpPlatforms:[],drpHazards:[],drpPits:[]
   });
 })();
 `;
@@ -36,12 +36,14 @@ const updateCode = String.raw`
   if(!state.drpParticles) state.drpParticles=[];
   if(!state.drpPlatforms) state.drpPlatforms=[];
   if(!state.drpHazards) state.drpHazards=[];
-  var g=state.drp,en=state.drpEnemies,pr=state.drpProjectiles,drops=state.drpDrops,parts=state.drpParticles,plats=state.drpPlatforms,haz=state.drpHazards;
+  if(!state.drpPits) state.drpPits=[];
+  var g=state.drp,en=state.drpEnemies,pr=state.drpProjectiles,drops=state.drpDrops,parts=state.drpParticles,plats=state.drpPlatforms,haz=state.drpHazards,pits=state.drpPits;
   function saneNum(v,d){return typeof v==='number'&&isFinite(v)?v:d;}
   g.atkTimer=saneNum(g.atkTimer,0);g.atkAnim=saneNum(g.atkAnim,0);g.atkSeq=saneNum(g.atkSeq,0);
   g.musicTick=saneNum(g.musicTick,0);g.musicStep=saneNum(g.musicStep,0);g.musicBar=saneNum(g.musicBar,0);g.musicNotes=saneNum(g.musicNotes,0);
   g.invuln=saneNum(g.invuln,0);g.grace=saneNum(g.grace,0);g.shake=saneNum(g.shake,0);g.levelTitle=saneNum(g.levelTitle,0);g.transitionTimer=saneNum(g.transitionTimer,0);g.transitionFrom=saneNum(g.transitionFrom,0);g.transitionTo=saneNum(g.transitionTo,0);g.levelHeal=saneNum(g.levelHeal,0);g.damageFlash=saneNum(g.damageFlash,0);
   g.maxJumps=saneNum(g.maxJumps,2);g.jumpsLeft=saneNum(g.jumpsLeft,0);g.weaponTier=saneNum(g.weaponTier,1);g.weaponRange=saneNum(g.weaponRange,52);
+  g.dropTimer=saneNum(g.dropTimer,0);g.dropPlatformIndex=saneNum(g.dropPlatformIndex,-1);g.onPlatformIndex=saneNum(g.onPlatformIndex,-1);
   if(!g.last)g.last={};if(!g.buffs)g.buffs={};if(!g.stats)g.stats={attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1};
 
   var classes=[
@@ -127,9 +129,41 @@ const updateCode = String.raw`
   function levelLength(){return 2600+g.level*360;}
   function enemyBase(type){return {rat:[28,9,36,24],slime:[42,12,38,30],bat:[30,10,34,28],skel:[56,16,36,48],cult:[46,13,34,46],archer:[44,15,34,46],knight:[92,22,42,54],wisp:[36,14,30,34],boss:[360,28,96,118]}[type]||[40,10,34,34];}
   function isFlyer(type){return type==='bat'||type==='wisp';}
+  function pitAt(x,w){
+    var left=x+4,right=x+w-4;
+    for(var i=0;i<pits.length;i++){var p=pits[i];if(right>p.x&&left<p.x+p.w)return p;}
+    return null;
+  }
   function floorBlocked(x,w){
-    var foot={x:x+3,y:FLOOR-18,w:Math.max(2,w-6),h:18};
-    for(var i=0;i<haz.length;i++){var z=haz[i];if(rect(foot,z))return true;}
+    return !!pitAt(x,w);
+  }
+  function nearestSafeFloorX(seed,w,idx){
+    var min=120,max=levelLength()-180,step=44+(idx||0)*5,base=Math.min(max,Math.max(min,seed));
+    if(!floorBlocked(base,w))return base;
+    for(var n=1;n<38;n++){
+      var a=Math.min(max,base+step*n);if(!floorBlocked(a,w))return a;
+      var b=Math.max(min,base-step*n);if(!floorBlocked(b,w))return b;
+    }
+    return 120;
+  }
+  function surfaceForDrop(x,w,preferredY,e){
+    var cx=x+w/2,pl=null;
+    if(e&&e.groundY&&e.groundY<FLOOR&&e.platformW){
+      pl={x:e.platformX,y:e.groundY,w:e.platformW,h:18};
+    }else pl=platformFor(x,w,preferredY);
+    if(pl&&cx>=pl.x+8&&cx<=pl.x+pl.w-8)return {x:Math.max(pl.x+8,Math.min(pl.x+pl.w-w-8,x)),y:pl.y,platform:true};
+    var fx=nearestSafeFloorX(x,w,0);
+    return {x:fx,y:FLOOR,platform:false};
+  }
+  function recoverFromPit(){
+    var fx=nearestSafeFloorX(g.worldX,g.wid,0);
+    if(g.invuln<=0&&(g.grace||0)<=0)damage(16+g.level*4);
+    if(g.screen==='dead')return;
+    g.worldX=fx;g.y=FLOOR-g.hei;g.vy=0;g.onGround=true;g.onPlatformIndex=-1;g.jumpsLeft=g.maxJumps||2;g.invuln=Math.max(g.invuln||0,70);g.shake=12;puff(g.worldX+g.wid/2,FLOOR-8,'#8ef7ff',14);
+  }
+  function pitSpaceBlocked(x,w,y,h){
+    var r={x:x+4,y:y,w:Math.max(2,w-8),h:h};
+    for(var i=0;i<pits.length;i++){if(rect(r,pits[i]))return true;}
     return false;
   }
   function platformFor(x,w,preferredY){
@@ -187,14 +221,18 @@ const updateCode = String.raw`
     else{e.dir=dx>0?-1:1;e.jump=Math.max(e.jump||0,24);e.vx=0;}
   }
   function makeLevel(){
-    en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;
+    en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;pits.length=0;
     g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.invuln=260;g.grace=260;g.jumpsLeft=g.maxJumps||2;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';g.levelTitle=190;g.levelTitleText=g.message;
     var len=levelLength();
     g.exitX=len-112;g.exitY=FLOOR-96;g.exitW=68;g.exitH=96;g.exitOpen=g.level<g.maxLevel;
+    for(var px=720;px<len-430;px+=520+Math.floor(Math.random()*140)){
+      var pw=88+Math.floor(Math.random()*70),safeX=Math.min(len-520,px+Math.floor(Math.random()*80));
+      if(safeX>520&&safeX+pw<g.exitX-140){pits.push({x:safeX,y:FLOOR,w:pw,h:H-FLOOR,type:'pit'});if(Math.random()<.82)haz.push({x:safeX+14,y:FLOOR+26,w:Math.max(34,pw-28),h:28,type:'spikes',pit:true});}
+    }
     for(var x=420;x<len-260;x+=280+Math.floor(Math.random()*150)){
-      var y=358-Math.floor(Math.random()*84),ww=124+Math.floor(Math.random()*96);
-      plats.push({x:x,y:y,w:ww,h:18});
-      if(x>760&&Math.random()<.45)haz.push({x:x+ww+60,y:FLOOR-20,w:54+Math.random()*70,h:20,type:'spikes'});
+      var y=358-Math.floor(Math.random()*84),ww=124+Math.floor(Math.random()*96),large=Math.random()<.3;
+      if(large){ww+=90+Math.floor(Math.random()*90);y+=18;}
+      plats.push({x:x,y:y,w:ww,h:large?26:18,semi:true,drop:true,large:large});
     }
     var types=['rat','slime','bat','skel','cult','archer','knight','wisp'];
     for(var e=0;e<7+g.level*3;e++){
@@ -232,16 +270,18 @@ const updateCode = String.raw`
     chooseMenu(stats.length);var cs=clickedStat();if(cs>=0)g.menuIndex=cs;if((cs>=0)||confirm&&!g.last.confirm){var st=stats[g.menuIndex];g.stats[st]++;g.statPoints--;if(st==='hp'){g.maxHp+=12;g.hp+=12;}sfx('level');if(g.statPoints<=0)g.screen='play';}
     g.last={up:up,down:down,confirm:confirm};return state;
   }
-  if(g.screen==='dead'||g.screen==='win'){if(click||confirm&&!g.last.confirm){g.screen='class';g.menuIndex=0;g.classIndex=0;g.weaponIndex=0;g.className='';g.weaponName='';g.transitionTimer=0;g.transitionFrom=0;g.transitionTo=0;g.transitionText='';g.levelHeal=0;en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;}g.last={confirm:confirm};return state;}
+  if(g.screen==='dead'||g.screen==='win'){if(click||confirm&&!g.last.confirm){g.screen='class';g.menuIndex=0;g.classIndex=0;g.weaponIndex=0;g.className='';g.weaponName='';g.transitionTimer=0;g.transitionFrom=0;g.transitionTo=0;g.transitionText='';g.levelHeal=0;en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;pits.length=0;}g.last={confirm:confirm};return state;}
   if(g.screen!=='play'){return state;}
 
   var speed=3.1+g.stats.dexterity*.22+(g.buffs.haste?2.2:0),jumpPow=13.2+g.stats.dexterity*.16+(g.buffs.spring?3.2:0);
   if(left){g.worldX-=speed;g.face=-1;} if(right){g.worldX+=speed;g.face=1;}
   var minX=Math.max(20,g.cameraX-40); if(g.worldX<minX)g.worldX=minX;
-  if(jump&&!g.last.jump&&(g.onGround||(g.jumpsLeft||0)>0)){var air=!g.onGround;g.vy=air?-jumpPow*.92:-jumpPow;g.onGround=false;g.jumpsLeft=Math.max(0,(g.jumpsLeft||1)-1);puff(g.worldX+g.wid/2,g.y+g.hei-4,air?'#8ef7ff':'#f0d36b',air?8:5);snd(air?520:250,.05,air?'triangle':'square',.025);}
-  g.vy+=GRAV; g.y+=g.vy; g.onGround=false;
-  if(g.y+g.hei>=FLOOR){g.y=FLOOR-g.hei;g.vy=0;g.onGround=true;g.jumpsLeft=g.maxJumps||2;}
-  for(var p=0;p<plats.length;p++){var pl=plats[p];if(g.vy>=0&&g.worldX+g.wid>pl.x&&g.worldX<pl.x+pl.w&&g.y+g.hei>pl.y&&g.y+g.hei<pl.y+24){g.y=pl.y-g.hei;g.vy=0;g.onGround=true;g.jumpsLeft=g.maxJumps||2;}}
+  if(g.dropTimer>0)g.dropTimer--;
+  if(jump&&!g.last.jump&&down&&g.onGround&&g.onPlatformIndex>=0){g.dropTimer=18;g.dropPlatformIndex=g.onPlatformIndex;g.y+=5;g.vy=2.2;g.onGround=false;g.onPlatformIndex=-1;puff(g.worldX+g.wid/2,g.y+g.hei-4,'#8ef7ff',5);}
+  else if(jump&&!g.last.jump&&(g.onGround||(g.jumpsLeft||0)>0)){var air=!g.onGround;g.vy=air?-jumpPow*.92:-jumpPow;g.onGround=false;g.onPlatformIndex=-1;g.jumpsLeft=Math.max(0,(g.jumpsLeft||1)-1);puff(g.worldX+g.wid/2,g.y+g.hei-4,air?'#8ef7ff':'#f0d36b',air?8:5);snd(air?520:250,.05,air?'triangle':'square',.025);}
+  g.vy+=GRAV; g.y+=g.vy; g.onGround=false;g.onPlatformIndex=-1;
+  if(g.y+g.hei>=FLOOR&&!floorBlocked(g.worldX,g.wid)){g.y=FLOOR-g.hei;g.vy=0;g.onGround=true;g.onPlatformIndex=-1;g.jumpsLeft=g.maxJumps||2;}
+  for(var p=0;p<plats.length;p++){var pl=plats[p];if(g.dropTimer>0&&g.dropPlatformIndex===p)continue;if(g.vy>=0&&g.worldX+g.wid>pl.x&&g.worldX<pl.x+pl.w&&g.y+g.hei>pl.y&&g.y+g.hei<pl.y+Math.max(24,pl.h+8)){g.y=pl.y-g.hei;g.vy=0;g.onGround=true;g.onPlatformIndex=p;g.jumpsLeft=g.maxJumps||2;}}
   g.cameraX=Math.max(g.cameraX,Math.min(g.worldX-210,levelLength()-W+70));
   if(left||right||jump||attack)g.grace=Math.min(g.grace||0,90);
   if(g.grace>0)g.grace--; if(g.levelTitle>0)g.levelTitle--;
@@ -285,11 +325,13 @@ const updateCode = String.raw`
     if(e.move!=='fly'){e.vy=(e.vy||0)+GRAV; e.y+=e.vy; var gy=e.groundY||FLOOR;if(e.y+e.h>=gy){e.y=gy-e.h;e.vy=0;}}
   }
   for(var hi=0;hi<haz.length;hi++){var hz=haz[hi];if(g.invuln<=0&&rect({x:g.worldX+6,y:g.y+6,w:g.wid-12,h:g.hei-8},hz)){damage(12+g.level*3);}}
+  if(g.y>FLOOR+70||pitSpaceBlocked(g.worldX,g.wid,g.y+10,g.hei-12))recoverFromPit();
   function damage(d){if(g.invuln>0||(g.grace||0)>0)return;var red=Math.min(.65,(g.stats.defense+(g.buffs.armor?5:0))*.055);var hit=Math.max(1,Math.floor(d*(1-red)));g.hp-=hit;g.invuln=g.buffs.shield?90:56;g.damageFlash=18;g.shake=9;sfx('hit');puff(g.worldX+g.wid/2,g.y+20,'#ff5577',12);if(g.hp<=0){g.hp=0;g.screen='dead';g.message='The dungeon keeps your bones.';}}
   function gainXp(v){v=Math.floor(v*(1+g.stats.wisdom*.05+(g.buffs.tome?.55:0)));g.xp+=v;while(g.xp>=g.nextXp){g.xp-=g.nextXp;g.nextXp=Math.floor(g.nextXp*1.34+18);g.statPoints++;g.screen='levelup';sfx('level');}}
   function dropAt(x,y,e){
-    var chance=.35+g.stats.luck*.035;if(e.boss)chance=1;if(Math.random()<chance){var roll=Math.random(),kind='power';if(roll<.2)kind='weapon';else if(roll<.34)kind='upgrade';var pwr=powerDefs[Math.floor(Math.random()*powerDefs.length)];drops.push({x:x,y:y,w:24,h:24,kind:kind,power:pwr[0],color:pwr[2],label:kind==='weapon'?'weapon':kind==='upgrade'?'upgrade':pwr[0],life:900});}
-    drops.push({x:x+10,y:y-10,w:18,h:18,kind:'xp',label:'xp',color:'#8ef7ff',xp:e.xp,life:900});
+    var surf=surfaceForDrop(x,24,y,e),dy=surf.y-24;
+    var chance=.35+g.stats.luck*.035;if(e.boss)chance=1;if(Math.random()<chance){var roll=Math.random(),kind='power';if(roll<.2)kind='weapon';else if(roll<.34)kind='upgrade';var pwr=powerDefs[Math.floor(Math.random()*powerDefs.length)];drops.push({x:surf.x,y:dy,w:24,h:24,kind:kind,power:pwr[0],color:pwr[2],label:kind==='weapon'?'weapon':kind==='upgrade'?'upgrade':pwr[0],life:900});}
+    var xpSurf=surfaceForDrop(x+10,18,y-10,e);drops.push({x:xpSurf.x,y:xpSurf.y-18,w:18,h:18,kind:'xp',label:'xp',color:'#8ef7ff',xp:e.xp,life:900});
   }
   for(var pi=pr.length-1;pi>=0;pi--){
     var a=pr[pi];a.life--; if(a.kind!=='slash'){a.x+=a.vx||0;a.y+=a.vy||0;}
@@ -305,8 +347,8 @@ const updateCode = String.raw`
   for(var pa=0;pa<parts.length;pa++){var pp=parts[pa];pp.x+=pp.vx;pp.y+=pp.vy;pp.vy+=.15;pp.life--;}for(var pp2=parts.length-1;pp2>=0;pp2--)if(parts[pp2].life<=0)parts.splice(pp2,1);
   if(g.exitOpen&&g.worldX+g.wid>g.exitX+18&&g.level<g.maxLevel)beginTransition();
 
-  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,enemies:en.map(function(e){return {type:e.type,move:e.move||'ground',x:Math.round(e.x),y:Math.round(e.y),groundY:Math.round(e.groundY||FLOOR),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen,transitionTimer:g.transitionTimer||0,levelHeal:g.levelHeal||0};}catch(e){}
-  state.drp=g;state.drpEnemies=en;state.drpProjectiles=pr;state.drpDrops=drops;state.drpParticles=parts;state.drpPlatforms=plats;state.drpHazards=haz;return state;
+  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,down:down,dropTimer:g.dropTimer||0,onPlatformIndex:g.onPlatformIndex,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,pits:pits.map(function(p){return {x:Math.round(p.x),w:Math.round(p.w)};}),drops:drops.map(function(d){return {kind:d.kind,x:Math.round(d.x),y:Math.round(d.y)};}),platforms:plats.map(function(p){return {x:Math.round(p.x),y:Math.round(p.y),w:Math.round(p.w),large:!!p.large};}),enemies:en.map(function(e){return {type:e.type,move:e.move||'ground',x:Math.round(e.x),y:Math.round(e.y),groundY:Math.round(e.groundY||FLOOR),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen,transitionTimer:g.transitionTimer||0,levelHeal:g.levelHeal||0};}catch(e){}
+  state.drp=g;state.drpEnemies=en;state.drpProjectiles=pr;state.drpDrops=drops;state.drpParticles=parts;state.drpPlatforms=plats;state.drpHazards=haz;state.drpPits=pits;return state;
 })();
 `;
 
@@ -314,7 +356,7 @@ const renderCode = String.raw`
 (function(){
   var c=drawingContext,cw=dimensionContext.width,ch=dimensionContext.height,W=960,H=540,FLOOR=468;
   var g=state.drp||{screen:'class',frame:0,classIndex:0,menuIndex:0,level:1,stats:{},hp:100,maxHp:100};
-  var en=state.drpEnemies||[],pr=state.drpProjectiles||[],drops=state.drpDrops||[],parts=state.drpParticles||[],plats=state.drpPlatforms||[],haz=state.drpHazards||[];
+  var en=state.drpEnemies||[],pr=state.drpProjectiles||[],drops=state.drpDrops||[],parts=state.drpParticles||[],plats=state.drpPlatforms||[],haz=state.drpHazards||[],pits=state.drpPits||[];
   var scale=Math.min(cw/W,ch/H),ox=(cw-W*scale)/2,oy=(ch-H*scale)/2,t=(g.frame||0)/60;
   var classes=[
     {name:'Warrior',color:'#e85d75',desc:'frontline bruiser: defense, heavy melee, forgiving HP',weapons:['Iron Cleaver','Bulwark Axe']},
@@ -342,8 +384,10 @@ const renderCode = String.raw`
       c.fillStyle='rgba(255,218,122,.10)';c.fillRect(bx+20,398,9,28);c.fillRect(bx+164,372,9,30);
     }
     c.restore();
-    c.save();c.translate(-cam,0);c.fillStyle='#130d14';c.fillRect(cam,FLOOR,W+40,H-FLOOR);c.strokeStyle='rgba(205,192,177,.18)';for(var x=Math.floor(cam/48)*48;x<cam+W+60;x+=48){c.beginPath();c.moveTo(x,FLOOR+16);c.lineTo(x+28,FLOOR+16);c.stroke();c.beginPath();c.moveTo(x,FLOOR+42);c.lineTo(x+48,FLOOR+42);c.stroke();}
-    for(var p=0;p<plats.length;p++){var pl=plats[p];px(pl.x,pl.y,pl.w,pl.h,'rgba(52,42,59,.95)');px(pl.x,pl.y,pl.w,4,'rgba(139,255,224,.25)');for(var bs=0;bs<pl.w;bs+=28)px(pl.x+bs,pl.y+9,18,2,'rgba(205,192,177,.12)');}
+    c.save();c.translate(-cam,0);c.fillStyle='#130d14';c.fillRect(cam,FLOOR,W+40,H-FLOOR);
+    for(var pit=0;pit<pits.length;pit++){var pt=pits[pit];px(pt.x,FLOOR,pt.w,H-FLOOR,'#030208');px(pt.x-6,FLOOR-8,8,12,'#2c1d27');px(pt.x+pt.w-2,FLOOR-8,8,12,'#2c1d27');for(var py=FLOOR+18;py<H;py+=28)px(pt.x+8,py,pt.w-16,2,'rgba(142,247,255,.08)');}
+    c.strokeStyle='rgba(205,192,177,.18)';for(var x=Math.floor(cam/48)*48;x<cam+W+60;x+=48){var skip=false;for(var pp=0;pp<pits.length;pp++){if(x+48>pits[pp].x&&x<pits[pp].x+pits[pp].w){skip=true;break;}}if(skip)continue;c.beginPath();c.moveTo(x,FLOOR+16);c.lineTo(x+28,FLOOR+16);c.stroke();c.beginPath();c.moveTo(x,FLOOR+42);c.lineTo(x+48,FLOOR+42);c.stroke();}
+    for(var p=0;p<plats.length;p++){var pl=plats[p],face=pl.large?'rgba(62,52,67,.98)':'rgba(52,42,59,.95)';px(pl.x,pl.y,pl.w,pl.h,face);px(pl.x,pl.y,pl.w,5,'rgba(139,255,224,.34)');for(var bs=0;bs<pl.w;bs+=28){px(pl.x+bs,pl.y+9,18,2,'rgba(205,192,177,.15)');if(pl.large)px(pl.x+bs+3,pl.y+17,12,4,'rgba(8,6,14,.26)');}}
     for(var h=0;h<haz.length;h++){var hz=haz[h];px(hz.x,hz.y+10,hz.w,12,'#5b1022');px(hz.x,hz.y+21,hz.w,4,'#210714');for(var sx=0;sx<hz.w;sx+=14){px(hz.x+sx+2,hz.y+2,10,8,'#e9d5a3');px(hz.x+sx+4,hz.y-6,6,8,'#f8ebc0');px(hz.x+sx+6,hz.y-12,2,6,'#fff6d8');}}
     c.restore();
   }
@@ -421,7 +465,7 @@ writeJson("init.json", {
 writeJson("update.json", {
   id: "glade-dungeon-rogue-update",
   name: "Dungeon Relic Rogue Update",
-  description: "Class weapons, combat, XP/stat leveling, drops, powerups, floors, boss, and NES synth audio",
+  description: "Class combat, pits, semi-solid platforms, safe drops, XP/stat leveling, floors, boss, and NES synth audio",
   phase: "update",
   code: updateCode.trim()
 });
@@ -429,19 +473,19 @@ writeJson("update.json", {
 writeJson("render.json", {
   id: "glade-dungeon-rogue-render",
   name: "Dungeon Relic Rogue Render",
-  description: "Render scaled dungeon roguelike platformer with stable HUD and menus",
+  description: "Render scaled dungeon roguelike platformer with pits, semi-solid blocks, stable HUD, and menus",
   phase: "render",
   code: renderCode.trim()
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v14",
-  name: "Dungeon Relic Rogue V14",
-  description: "An enemy-behavior pass for the NES-flavored roguelike platformer: flying bats and wisps, grounded foes that respect hazards and platform edges, elevated enemy spawns, classes, relic weapons, drops, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v15",
+  name: "Dungeon Relic Rogue V15",
+  description: "A traversal-rules pass for the NES-flavored roguelike platformer: real pit spans, lowered pit spikes, grounded foes and drops that respect safe surfaces, large semi-solid blocks, drop-through platforms, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
-    { moduleId: "glade-dungeon-rogue-init", version: 6 },
-    { moduleId: "glade-dungeon-rogue-update", version: 14 },
-    { moduleId: "glade-dungeon-rogue-render", version: 11 }
+    { moduleId: "glade-dungeon-rogue-init", version: 7 },
+    { moduleId: "glade-dungeon-rogue-update", version: 15 },
+    { moduleId: "glade-dungeon-rogue-render", version: 12 }
   ]
 });
