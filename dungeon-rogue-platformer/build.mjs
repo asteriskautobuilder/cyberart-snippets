@@ -16,7 +16,7 @@ const initCode = String.raw`
       hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,dead:false,won:false,grace:0,
       atkTimer:0,atkAnim:0,atkSeq:0,invuln:0,onGround:false,jumpsLeft:0,maxJumps:2,shake:0,message:'Choose a class',
       className:'',weaponName:'',weaponTier:1,weaponKind:'',weaponRange:52,
-      attackStyle:'cleaver',levelTitle:0,levelTitleText:'',
+      attackStyle:'cleaver',levelTitle:0,levelTitleText:'',transitionTimer:0,transitionFrom:0,transitionTo:0,transitionText:'',levelHeal:0,damageFlash:0,
       stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},
       buffs:{},last:{},audioReady:false,audioBlocked:false,audioArmed:false,musicTick:0,musicStep:0,musicBar:0,
       exitX:0,exitY:0,exitW:0,exitH:0,exitOpen:false
@@ -29,7 +29,7 @@ const initCode = String.raw`
 const updateCode = String.raw`
 (function(){
   var W=960,H=540,FLOOR=468,GRAV=0.72;
-  if(!state.drp){state.drp={w:W,h:H,screen:'class',frame:0,menuIndex:0,classIndex:0,weaponIndex:0,level:1,maxLevel:5,worldX:80,cameraX:0,y:330,vy:0,wid:34,hei:52,face:1,hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},buffs:{},last:{}};}
+  if(!state.drp){state.drp={w:W,h:H,screen:'class',frame:0,menuIndex:0,classIndex:0,weaponIndex:0,level:1,maxLevel:5,worldX:80,cameraX:0,y:330,vy:0,wid:34,hei:52,face:1,hp:100,maxHp:100,xp:0,nextXp:35,statPoints:0,stats:{attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1},buffs:{},last:{},transitionTimer:0,transitionFrom:0,transitionTo:0,transitionText:'',levelHeal:0,damageFlash:0};}
   if(!state.drpEnemies) state.drpEnemies=[];
   if(!state.drpProjectiles) state.drpProjectiles=[];
   if(!state.drpDrops) state.drpDrops=[];
@@ -40,7 +40,7 @@ const updateCode = String.raw`
   function saneNum(v,d){return typeof v==='number'&&isFinite(v)?v:d;}
   g.atkTimer=saneNum(g.atkTimer,0);g.atkAnim=saneNum(g.atkAnim,0);g.atkSeq=saneNum(g.atkSeq,0);
   g.musicTick=saneNum(g.musicTick,0);g.musicStep=saneNum(g.musicStep,0);g.musicBar=saneNum(g.musicBar,0);g.musicNotes=saneNum(g.musicNotes,0);
-  g.invuln=saneNum(g.invuln,0);g.grace=saneNum(g.grace,0);g.shake=saneNum(g.shake,0);g.levelTitle=saneNum(g.levelTitle,0);
+  g.invuln=saneNum(g.invuln,0);g.grace=saneNum(g.grace,0);g.shake=saneNum(g.shake,0);g.levelTitle=saneNum(g.levelTitle,0);g.transitionTimer=saneNum(g.transitionTimer,0);g.transitionFrom=saneNum(g.transitionFrom,0);g.transitionTo=saneNum(g.transitionTo,0);g.levelHeal=saneNum(g.levelHeal,0);g.damageFlash=saneNum(g.damageFlash,0);
   g.maxJumps=saneNum(g.maxJumps,2);g.jumpsLeft=saneNum(g.jumpsLeft,0);g.weaponTier=saneNum(g.weaponTier,1);g.weaponRange=saneNum(g.weaponRange,52);
   if(!g.last)g.last={};if(!g.buffs)g.buffs={};if(!g.stats)g.stats={attack:1,defense:1,dexterity:1,intelligence:1,wisdom:1,luck:1,hp:1};
 
@@ -127,7 +127,7 @@ const updateCode = String.raw`
   function levelLength(){return 2600+g.level*360;}
   function makeLevel(){
     en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;
-    g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.hp=Math.min(g.maxHp,g.hp+24+g.stats.wisdom*3);g.invuln=260;g.grace=260;g.jumpsLeft=g.maxJumps||2;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';g.levelTitle=190;g.levelTitleText=g.message;
+    g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.invuln=260;g.grace=260;g.jumpsLeft=g.maxJumps||2;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';g.levelTitle=190;g.levelTitleText=g.message;
     var len=levelLength();
     g.exitX=len-112;g.exitY=FLOOR-96;g.exitW=68;g.exitH=96;g.exitOpen=g.level<g.maxLevel;
     for(var x=420;x<len-260;x+=280+Math.floor(Math.random()*150)){
@@ -142,6 +142,13 @@ const updateCode = String.raw`
     }
     if(g.level>=g.maxLevel) spawnEnemy('boss',len-360,true);
   }
+  function recoverForLevel(){
+    var missing=Math.max(0,g.maxHp-g.hp),base=Math.ceil(g.maxHp*.35),catchup=Math.ceil(missing*.55),wisdom=28+(g.stats.wisdom||0)*5;
+    var heal=Math.min(missing,Math.max(base,catchup,wisdom));g.hp=Math.min(g.maxHp,g.hp+heal);g.levelHeal=heal;return heal;
+  }
+  function beginTransition(){
+    var from=g.level;g.level++;makeLevel();recoverForLevel();g.screen='transition';g.transitionTimer=140;g.transitionFrom=from;g.transitionTo=g.level;g.transitionText=g.message;g.last={};sfx('level');
+  }
   function spawnEnemy(type,x,boss){
     var base={rat:[28,9,36,24],slime:[42,12,38,30],bat:[30,10,34,28],skel:[56,16,36,48],cult:[46,13,34,46],archer:[44,15,34,46],knight:[92,22,42,54],wisp:[36,14,30,34],boss:[360,28,96,118]}[type]||[40,10,34,34];
     var hp=base[0]+g.level*10+(boss?120:0),dmg=base[1]+g.level*2;
@@ -154,6 +161,7 @@ const updateCode = String.raw`
   function clickedStat(){if(!click)return -1;for(var i=0;i<stats.length;i++){var y=170+i*38;if(hit(236,y-24,488,30))return i;}return -1;}
 
   g.frame++;
+  if(g.screen==='transition'){g.transitionTimer--;if(g.transitionTimer<=0){g.screen='play';g.transitionTimer=0;g.last={};}return state;}
   for(var bn in g.buffs){if(g.buffs[bn]>0)g.buffs[bn]--;else delete g.buffs[bn];}
   if(click||held||left||right||jump||attack||confirm||up||down)armAudio();
   music();
@@ -163,7 +171,7 @@ const updateCode = String.raw`
     chooseMenu(stats.length);var cs=clickedStat();if(cs>=0)g.menuIndex=cs;if((cs>=0)||confirm&&!g.last.confirm){var st=stats[g.menuIndex];g.stats[st]++;g.statPoints--;if(st==='hp'){g.maxHp+=12;g.hp+=12;}sfx('level');if(g.statPoints<=0)g.screen='play';}
     g.last={up:up,down:down,confirm:confirm};return state;
   }
-  if(g.screen==='dead'||g.screen==='win'){if(click||confirm&&!g.last.confirm){g.screen='class';g.menuIndex=0;g.classIndex=0;g.weaponIndex=0;g.className='';g.weaponName='';en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;}g.last={confirm:confirm};return state;}
+  if(g.screen==='dead'||g.screen==='win'){if(click||confirm&&!g.last.confirm){g.screen='class';g.menuIndex=0;g.classIndex=0;g.weaponIndex=0;g.className='';g.weaponName='';g.transitionTimer=0;g.transitionFrom=0;g.transitionTo=0;g.transitionText='';g.levelHeal=0;en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;}g.last={confirm:confirm};return state;}
   if(g.screen!=='play'){return state;}
 
   var speed=3.1+g.stats.dexterity*.22+(g.buffs.haste?2.2:0),jumpPow=13.2+g.stats.dexterity*.16+(g.buffs.spring?3.2:0);
@@ -176,7 +184,7 @@ const updateCode = String.raw`
   g.cameraX=Math.max(g.cameraX,Math.min(g.worldX-210,levelLength()-W+70));
   if(left||right||jump||attack)g.grace=Math.min(g.grace||0,90);
   if(g.grace>0)g.grace--; if(g.levelTitle>0)g.levelTitle--;
-  if(g.invuln>0)g.invuln--; if(g.shake>0)g.shake*=.84;
+  if(g.invuln>0)g.invuln--; if(g.shake>0)g.shake*=.84; if(g.damageFlash>0)g.damageFlash--;
   if(g.atkTimer>0)g.atkTimer--; if(g.atkAnim>0)g.atkAnim--;
   if(attack&&g.atkTimer<=0){
     g.attackEntered=(g.attackEntered||0)+1;
@@ -209,7 +217,7 @@ const updateCode = String.raw`
     e.vy=(e.vy||0)+GRAV; e.y+=e.vy; if(e.y+e.h>=FLOOR){e.y=FLOOR-e.h;e.vy=0;}
   }
   for(var hi=0;hi<haz.length;hi++){var hz=haz[hi];if(g.invuln<=0&&rect({x:g.worldX+6,y:g.y+6,w:g.wid-12,h:g.hei-8},hz)){damage(12+g.level*3);}}
-  function damage(d){if(g.invuln>0||(g.grace||0)>0)return;var red=Math.min(.65,(g.stats.defense+(g.buffs.armor?5:0))*.055);var hit=Math.max(1,Math.floor(d*(1-red)));g.hp-=hit;g.invuln=g.buffs.shield?90:38;g.shake=9;sfx('hit');puff(g.worldX+g.wid/2,g.y+20,'#ff5577',12);if(g.hp<=0){g.hp=0;g.screen='dead';g.message='The dungeon keeps your bones.';}}
+  function damage(d){if(g.invuln>0||(g.grace||0)>0)return;var red=Math.min(.65,(g.stats.defense+(g.buffs.armor?5:0))*.055);var hit=Math.max(1,Math.floor(d*(1-red)));g.hp-=hit;g.invuln=g.buffs.shield?90:56;g.damageFlash=18;g.shake=9;sfx('hit');puff(g.worldX+g.wid/2,g.y+20,'#ff5577',12);if(g.hp<=0){g.hp=0;g.screen='dead';g.message='The dungeon keeps your bones.';}}
   function gainXp(v){v=Math.floor(v*(1+g.stats.wisdom*.05+(g.buffs.tome?.55:0)));g.xp+=v;while(g.xp>=g.nextXp){g.xp-=g.nextXp;g.nextXp=Math.floor(g.nextXp*1.34+18);g.statPoints++;g.screen='levelup';sfx('level');}}
   function dropAt(x,y,e){
     var chance=.35+g.stats.luck*.035;if(e.boss)chance=1;if(Math.random()<chance){var roll=Math.random(),kind='power';if(roll<.2)kind='weapon';else if(roll<.34)kind='upgrade';var pwr=powerDefs[Math.floor(Math.random()*powerDefs.length)];drops.push({x:x,y:y,w:24,h:24,kind:kind,power:pwr[0],color:pwr[2],label:kind==='weapon'?'weapon':kind==='upgrade'?'upgrade':pwr[0],life:900});}
@@ -227,9 +235,9 @@ const updateCode = String.raw`
   function applyPower(p){if(p==='heart')g.hp=Math.min(g.maxHp,g.hp+35+g.stats.wisdom*4);else if(p==='bomb'){for(var i=0;i<en.length;i++)if(!en[i].dead&&Math.abs(en[i].x-g.worldX)<360){en[i].hp-=70;if(en[i].hp<=0){en[i].dead=true;dropAt(en[i].x,en[i].y,en[i]);}}g.shake=12;}else{var dur=360+g.stats.wisdom*24;g.buffs[p]=dur;}}
   if(g.buffs.regen&&g.frame%45===0)g.hp=Math.min(g.maxHp,g.hp+3+g.stats.wisdom);
   for(var pa=0;pa<parts.length;pa++){var pp=parts[pa];pp.x+=pp.vx;pp.y+=pp.vy;pp.vy+=.15;pp.life--;}for(var pp2=parts.length-1;pp2>=0;pp2--)if(parts[pp2].life<=0)parts.splice(pp2,1);
-  if(g.exitOpen&&g.worldX+g.wid>g.exitX+18&&g.level<g.maxLevel){g.level++;makeLevel();sfx('level');}
+  if(g.exitOpen&&g.worldX+g.wid>g.exitX+18&&g.level<g.maxLevel)beginTransition();
 
-  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,enemies:en.map(function(e){return {type:e.type,x:Math.round(e.x),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen};}catch(e){}
+  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,enemies:en.map(function(e){return {type:e.type,x:Math.round(e.x),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen,transitionTimer:g.transitionTimer||0,levelHeal:g.levelHeal||0};}catch(e){}
   state.drp=g;state.drpEnemies=en;state.drpProjectiles=pr;state.drpDrops=drops;state.drpParticles=parts;state.drpPlatforms=plats;state.drpHazards=haz;return state;
 })();
 `;
@@ -319,7 +327,8 @@ const renderCode = String.raw`
     for(var r=0;r<parts.length;r++){var p=parts[r];c.globalAlpha=Math.max(0,p.life/40);c.fillStyle=p.c;c.fillRect(p.x,p.y,3,3);c.globalAlpha=1;}
     c.restore();for(var e=0;e<en.length;e++)drawEnemy(en[e]);drawPlayer();c.restore();
   }
-  function hud(){panel(14,12,252,62);var hpw=128;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(32,26,hpw,10);c.fillStyle='#ff5577';c.fillRect(32,26,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,172,36,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(32,48,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(32,48,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,172,57,10,'#c8fbff');panel(W-292,12,278,56);txt((g.weaponName||'relic')+'  +'+(g.weaponTier||1),W-276,34,12,'#fff');var aud=g.audioReady?'music on':g.audioBlocked?'audio blocked':'press for music';txt(aud,W-28,56,9,g.audioReady?'#8ef7ff':g.audioBlocked?'#ffb0b0':'#ffd87a','right');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,92,14,'#8ef7ff','center');if(g.levelTitle>0){var a=Math.min(1,g.levelTitle/40);c.globalAlpha=a;panel(270,94,420,86);txt('FLOOR '+(g.level||1),W/2,126,14,'#8ef7ff','center');txt(g.levelTitleText||levelNames[(g.level||1)-1]||'Deep Floor',W/2,158,24,'#f0d36b','center');c.globalAlpha=1;}}
+  function hud(){panel(14,12,252,62);var hpw=128;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(32,26,hpw,10);c.fillStyle='#ff5577';c.fillRect(32,26,hpw*Math.max(0,g.hp/g.maxHp),10);txt('HP '+Math.ceil(g.hp)+'/'+g.maxHp,172,36,10,'#ffdce3');var xpPct=g.xp/g.nextXp;c.fillStyle='rgba(0,0,0,.55)';c.fillRect(32,48,hpw,8);c.fillStyle='#8ef7ff';c.fillRect(32,48,hpw*Math.min(1,xpPct),8);txt('XP '+g.xp+'/'+g.nextXp,172,57,10,'#c8fbff');panel(W-292,12,278,56);txt((g.weaponName||'relic')+'  +'+(g.weaponTier||1),W-276,34,12,'#fff');var aud=g.audioReady?'music on':g.audioBlocked?'audio blocked':'press for music';txt(aud,W-28,56,9,g.audioReady?'#8ef7ff':g.audioBlocked?'#ffb0b0':'#ffd87a','right');if(g.grace>0)txt('SAFE '+Math.ceil(g.grace/60),W/2,92,14,'#8ef7ff','center');if(g.levelTitle>0){var a=Math.min(1,g.levelTitle/40);c.globalAlpha=a;panel(270,94,420,86);txt('FLOOR '+(g.level||1),W/2,126,14,'#8ef7ff','center');txt(g.levelTitleText||levelNames[(g.level||1)-1]||'Deep Floor',W/2,158,24,'#f0d36b','center');c.globalAlpha=1;}if(g.damageFlash>0){c.globalAlpha=Math.min(.42,g.damageFlash/30);c.strokeStyle='#ff5577';c.lineWidth=12;c.strokeRect(6,6,W-12,H-12);c.globalAlpha=1;}}
+  function transition(){drawWorld();c.fillStyle='rgba(0,0,0,.78)';c.fillRect(0,0,W,H);c.fillStyle='rgba(25,44,56,.82)';c.fillRect(0,0,W,86);c.fillRect(0,H-70,W,70);panel(210,118,540,260);txt('DESCENT',W/2,164,15,'#8ef7ff','center');txt('FLOOR '+(g.transitionTo||g.level||1),W/2,214,34,'#f6f2ff','center');txt(g.transitionText||levelNames[(g.level||1)-1]||'Deep Floor',W/2,258,24,'#f0d36b','center');txt('Recovered +'+Math.ceil(g.levelHeal||0)+' HP',W/2,308,17,'#7dff9e','center');txt('Safe entry window active',W/2,342,13,'#8ef7ff','center');}
   function wrap(s,x,y,maxW,lineH,size,col,align){c.fillStyle=col||'#fff';c.font=size+'px monospace';c.textAlign=align||'left';c.textBaseline='alphabetic';var words=String(s).split(' '),line='';for(var i=0;i<words.length;i++){var test=line?line+' '+words[i]:words[i];if(c.measureText(test).width>maxW&&line){c.fillText(line,x,y);line=words[i];y+=lineH;}else line=test;}if(line)c.fillText(line,x,y);return y;}
   function menu(){
     var cls=classes[g.classIndex]||classes[0];background();panel(80,68,800,398);txt('DUNGEON RELIC ROGUE',W/2,116,30,'#f6f2ff','center');wrap('A roguelike platformer under a dead mountain. Choose a class, take a relic weapon, clear five floors, silence the Obsidian Choir.',W/2,146,730,18,13,'#c8d6e8','center');
@@ -327,7 +336,7 @@ const renderCode = String.raw`
     if(g.screen==='weapon'){txt(cls.name+' starting weapon',W/2,194,20,cls.color,'center');for(var j=0;j<2;j++){var yy=250+j*58,ss=j===g.menuIndex;c.fillStyle=ss?'rgba(142,247,255,.22)':'rgba(255,255,255,.05)';rr(250,yy-31,460,42,8);c.fill();txt((ss?'> ':'  ')+cls.weapons[j],W/2,yy,18,'#fff','center');}txt('ESC back   ENTER/CLICK start',W/2,410,13,'#ffd87a','center');}
   }
   function levelUp(){drawWorld();c.fillStyle='rgba(0,0,0,.72)';c.fillRect(0,0,W,H);panel(190,74,580,398);txt('LEVEL UP: choose a stat',W/2,122,24,'#fff','center');for(var i=0;i<stats.length;i++){var st=stats[i],y=170+i*38,sel=i===g.menuIndex;c.fillStyle=sel?'rgba(240,211,107,.23)':'rgba(255,255,255,.05)';rr(236,y-24,488,30,6);c.fill();txt((sel?'> ':'  ')+st.toUpperCase()+'  '+(g.stats[st]||0),258,y,16,'#f0d36b');txt(statText[st],456,y,12,'#cdd8e5');}txt('points: '+g.statPoints,W/2,455,14,'#8ef7ff','center');}
-  if(g.screen==='class'||g.screen==='weapon')menu();else if(g.screen==='levelup')levelUp();else{drawWorld();hud();if(g.screen==='dead'||g.screen==='win'){c.fillStyle='rgba(0,0,0,.72)';c.fillRect(0,0,W,H);panel(210,150,540,210);txt(g.screen==='win'?'VICTORY':'YOU DIED',W/2,205,28,g.screen==='win'?'#f0d36b':'#ff5577','center');txt(g.message||'',W/2,248,15,'#e9efff','center');txt('ENTER / CLICK to return to class select',W/2,303,14,'#8ef7ff','center');}}
+  if(g.screen==='class'||g.screen==='weapon')menu();else if(g.screen==='levelup')levelUp();else if(g.screen==='transition')transition();else{drawWorld();hud();if(g.screen==='dead'||g.screen==='win'){c.fillStyle='rgba(0,0,0,.72)';c.fillRect(0,0,W,H);panel(210,150,540,210);txt(g.screen==='win'?'VICTORY':'YOU DIED',W/2,205,28,g.screen==='win'?'#f0d36b':'#ff5577','center');txt(g.message||'',W/2,248,15,'#e9efff','center');txt('ENTER / CLICK to return to class select',W/2,303,14,'#8ef7ff','center');}}
   c.restore();
 })();
 `;
@@ -357,13 +366,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v12",
-  name: "Dungeon Relic Rogue V12",
-  description: "A real browser input repair pass for the NES-flavored roguelike platformer: queued S/D attack taps, arrow movement, Space jump, user-gesture audio unlock, finite synth music, exit doors, animated monsters, pixel-art dungeon visuals, double jump, XP/stat leveling, drops, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v13",
+  name: "Dungeon Relic Rogue V13",
+  description: "A recovery and floor-transition pass for the NES-flavored roguelike platformer: meaningful health restoration between depths, paused descent cards that name the next floor, safe entry windows, clearer damage feedback, classes, relic weapons, drops, XP/stat leveling, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
-    { moduleId: "glade-dungeon-rogue-init", version: 5 },
-    { moduleId: "glade-dungeon-rogue-update", version: 12 },
-    { moduleId: "glade-dungeon-rogue-render", version: 9 }
+    { moduleId: "glade-dungeon-rogue-init", version: 6 },
+    { moduleId: "glade-dungeon-rogue-update", version: 13 },
+    { moduleId: "glade-dungeon-rogue-render", version: 10 }
   ]
 });

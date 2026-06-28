@@ -1,20 +1,20 @@
 {
-  "id": "glade-dungeon-relic-rogue-v12",
-  "name": "Dungeon Relic Rogue V12",
-  "description": "A real browser input repair pass for the NES-flavored roguelike platformer: queued S/D attack taps, arrow movement, Space jump, user-gesture audio unlock, finite synth music, exit doors, animated monsters, pixel-art dungeon visuals, double jump, XP/stat leveling, drops, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v13",
+  "name": "Dungeon Relic Rogue V13",
+  "description": "A recovery and floor-transition pass for the NES-flavored roguelike platformer: meaningful health restoration between depths, paused descent cards that name the next floor, safe entry windows, clearer damage feedback, classes, relic weapons, drops, XP/stat leveling, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dungeon-rogue-init",
-      "version": 5
+      "version": 6
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 12
+      "version": 13
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 9
+      "version": 10
     }
   ]
 }
