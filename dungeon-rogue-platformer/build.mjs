@@ -129,7 +129,15 @@ const updateCode = String.raw`
   function rect(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
   function puff(x,y,col,n){for(var i=0;i<(n||8);i++)parts.push({x:x,y:y,vx:rnd(-2.8,2.8),vy:rnd(-4,1.5),life:24+Math.random()*18,c:col||'#fff'});}
   function applyClass(){var c=classes[g.classIndex],w=c.weapons[g.weaponIndex];g.className=c.name;g.weaponName=w[0];g.weaponKind=w[1];g.weaponRange=w[2];g.attackStyle=w[5]||w[1];g.stats={};for(var key in c.stats)g.stats[key]=c.stats[key];g.maxHp=c.hp+g.stats.hp*8;g.hp=g.maxHp;g.weaponTier=1;g.xp=0;g.nextXp=35;g.statPoints=0;g.maxJumps=2;g.jumpsLeft=2;}
-  function levelLength(){return 2600+g.level*360;}
+  var floorProfiles=[
+    {label:'rust_intro',length:4300,sectionStep:650,pitGap:680,pitChance:.62,ropeTarget:3,enemyPlatformChance:.5,sections:['shelf','stack','bridge','high'],firewheels:0,enemyBonus:1},
+    {label:'fungal_aqueduct',length:5050,sectionStep:720,pitGap:600,pitChance:.72,ropeTarget:4,enemyPlatformChance:.56,sections:['bridge','stack','shelf','high','block'],firewheels:1,enemyBonus:3},
+    {label:'ashen_library',length:5700,sectionStep:620,pitGap:720,pitChance:.55,ropeTarget:5,enemyPlatformChance:.66,sections:['stack','block','high','stack','shelf'],firewheels:1,enemyBonus:4},
+    {label:'clockwork_catacomb',length:6350,sectionStep:760,pitGap:660,pitChance:.62,ropeTarget:4,enemyPlatformChance:.62,sections:['block','high','bridge','stack'],firewheels:2,enemyBonus:5},
+    {label:'obsidian_choir',length:6900,sectionStep:680,pitGap:620,pitChance:.68,ropeTarget:6,enemyPlatformChance:.7,sections:['stack','high','block','bridge','stack'],firewheels:2,enemyBonus:7}
+  ];
+  function levelProfile(){return floorProfiles[Math.max(0,Math.min(floorProfiles.length-1,(g.level||1)-1))]||floorProfiles[0];}
+  function levelLength(){return levelProfile().length;}
   function enemyBase(type){return {rat:[28,9,36,24],slime:[42,12,38,30],bat:[30,10,34,28],skel:[56,16,36,48],cult:[46,13,34,46],archer:[44,15,34,46],knight:[92,22,42,54],wisp:[36,14,30,34],boss:[360,28,96,118]}[type]||[40,10,34,34];}
   function isFlyer(type){return type==='bat'||type==='wisp';}
   function pitAt(x,w){
@@ -192,10 +200,16 @@ const updateCode = String.raw`
     return base;
   }
   function makeGroundSpawn(type,seedX,idx){
-    var base=enemyBase(type),w=base[2],h=base[3],x=seedX,pl=null,tryPlat=type!=='rat'&&type!=='slime'&&Math.random()<.42;
+    var prof=levelProfile(),base=enemyBase(type),w=base[2],h=base[3],x=seedX,pl=null,tryPlat=type!=='rat'&&type!=='slime'&&Math.random()<(prof.enemyPlatformChance||.42);
     if(tryPlat&&plats.length){
       var start=Math.floor(Math.random()*plats.length);
-      for(var i=0;i<plats.length;i++){var p=plats[(start+i)%plats.length];if(p.x>420&&p.x+p.w<levelLength()-180&&p.w>w+34){pl=p;x=p.x+18+Math.random()*Math.max(8,p.w-w-36);break;}}
+      for(var pass=0;pass<2&&!pl;pass++){
+        for(var i=0;i<plats.length;i++){
+          var p=plats[(start+i)%plats.length],tag=p.tag||'',prefer=tag==='high'||tag==='stack'||tag==='block'||p.y<310;
+          if(pass===0&&!prefer)continue;
+          if(p.x>420&&p.x+p.w<levelLength()-180&&p.w>w+34){pl=p;x=p.x+18+Math.random()*Math.max(8,p.w-w-36);break;}
+        }
+      }
     }
     if(!pl){
       x=clearFloorX(x,w,idx);
@@ -251,17 +265,8 @@ const updateCode = String.raw`
   function makeLevel(){
     en.length=0;pr.length=0;drops.length=0;parts.length=0;plats.length=0;haz.length=0;pits.length=0;ropes.length=0;
     g.worldX=80;g.cameraX=0;g.y=FLOOR-g.hei;g.vy=0;g.onRope=false;g.ropeIndex=-1;g.ropeGrabCd=0;g.dashTimer=0;g.dashCd=0;g.invuln=260;g.grace=260;g.jumpsLeft=g.maxJumps||2;g.buffs={};g.message=floorNames[g.level-1]||'Deep Floor';g.levelTitle=190;g.levelTitleText=g.message;
-    var len=levelLength();
+    var prof=levelProfile(),len=levelLength();
     g.exitX=len-112;g.exitY=FLOOR-96;g.exitW=68;g.exitH=96;g.exitOpen=g.level<g.maxLevel;
-    for(var px=720;px<len-430;px+=520+Math.floor(Math.random()*140)){
-      var pw=88+Math.floor(Math.random()*70),safeX=Math.min(len-520,px+Math.floor(Math.random()*80));
-      if(safeX>520&&safeX+pw<g.exitX-140){pits.push({x:safeX,y:FLOOR,w:pw,h:H-FLOOR,type:'pit'});if(Math.random()<.82)haz.push({x:safeX+14,y:FLOOR+26,w:Math.max(34,pw-28),h:28,type:'spikes',pit:true});}
-    }
-    for(var x=420;x<len-260;x+=280+Math.floor(Math.random()*150)){
-      var y=358-Math.floor(Math.random()*84),ww=124+Math.floor(Math.random()*96),large=Math.random()<.3;
-      if(large){ww+=90+Math.floor(Math.random()*90);y+=18;}
-      plats.push({x:x,y:y,w:ww,h:large?26:18,semi:true,drop:true,large:large});
-    }
     function ropeClear(rx,top,bottom){
       if(rx<190||rx>g.exitX-130||bottom-top<74)return false;
       if(pitAt(rx-12,24)&&bottom>FLOOR-20)return false;
@@ -273,19 +278,75 @@ const updateCode = String.raw`
       top=Math.max(76,Math.floor(top));bottom=Math.min(FLOOR-10,Math.floor(bottom));
       if(ropeClear(rx,top,bottom))ropes.push({x:Math.floor(rx),y:top,h:bottom-top,w:12,bottomY:bottom,tag:tag||'platform'});
     }
+    function pitOverlap(x,w){
+      for(var i=0;i<pits.length;i++){var p=pits[i];if(x+w>p.x+6&&x<p.x+p.w-6)return true;}
+      return false;
+    }
+    function addPit(seedX,idx){
+      var pw=92+Math.floor(Math.random()*(g.level>=4?110:78)),x=Math.min(len-610,Math.max(700,seedX+Math.floor(Math.random()*90)-35));
+      if(x<620||x+pw>g.exitX-250)return false;
+      for(var i=0;i<pits.length;i++)if(Math.abs((pits[i].x+pits[i].w/2)-(x+pw/2))<310)return false;
+      pits.push({x:x,y:FLOOR,w:pw,h:H-FLOOR,type:'pit',tag:prof.label});
+      if(Math.random()<.86)haz.push({x:x+14,y:FLOOR+26,w:Math.max(34,pw-28),h:28,type:'spikes',pit:true});
+      return true;
+    }
+    function addPlat(x,y,w,h,large,tag){
+      x=Math.floor(Math.max(260,Math.min(g.exitX-150,x)));w=Math.floor(w);y=Math.floor(y);h=h||18;
+      if(x+w>g.exitX-90)w=Math.max(86,g.exitX-90-x);
+      if(w<76)return null;
+      if((tag==='shelf'||tag==='block')&&pitOverlap(x,w))return null;
+      var pl={x:x,y:y,w:w,h:h,semi:true,drop:true,large:!!large,tag:tag||''};
+      plats.push(pl);return pl;
+    }
+    function addStack(cx,tiers,baseY,tag){
+      var last=null;
+      for(var t=0;t<tiers;t++){
+        var w=(t===0?230:Math.max(126,208-t*28))+Math.floor(Math.random()*36),y=baseY-t*(58+Math.floor(Math.random()*8)),x=cx-w/2+(t%2?34:-18);
+        last=addPlat(x,y,w,t===0?26:18,t===0,tag||'stack');
+      }
+      if(tiers>2&&last)addRopeAt(last.x+Math.min(last.w-34,Math.max(34,last.w*.55)),last.y-104,FLOOR-10,'stack');
+    }
+    function addSection(kind,x,idx){
+      var jitter=Math.floor(Math.random()*95)-38;
+      if(kind==='shelf'){
+        addPlat(x+jitter,402-Math.floor(Math.random()*28),270+Math.floor(Math.random()*90),30,true,'shelf');
+        if(Math.random()<.45)addPlat(x+jitter+80,310-Math.floor(Math.random()*28),150+Math.floor(Math.random()*70),18,false,'high');
+      }else if(kind==='stack'){
+        addStack(x+110+jitter,2+(idx+g.level)%2+(g.level>=3&&Math.random()<.5?1:0),386-Math.floor(Math.random()*24),'stack');
+      }else if(kind==='high'){
+        var pl=addPlat(x+jitter,238+Math.floor(Math.random()*58),230+Math.floor(Math.random()*100),18,false,'high');
+        if(pl)addRopeAt(pl.x+pl.w*.5,pl.y-112,FLOOR-10,'high');
+        if(Math.random()<.62)addPlat(x+jitter+210,354+Math.floor(Math.random()*28),150+Math.floor(Math.random()*50),18,false,'step');
+      }else if(kind==='bridge'){
+        var pit=null;for(var p=0;p<pits.length;p++){if(Math.abs(pits[p].x-x)<260){pit=pits[p];break;}}
+        if(pit)addPlat(pit.x-36,326-Math.floor(Math.random()*44),pit.w+96,18,false,'bridge');
+        else addPlat(x+jitter,334-Math.floor(Math.random()*40),220+Math.floor(Math.random()*90),18,false,'bridge');
+      }else{
+        var b=addPlat(x+jitter,390-Math.floor(Math.random()*36),330+Math.floor(Math.random()*110),34,true,'block');
+        if(b&&Math.random()<.72)addPlat(b.x+46,b.y-88,170+Math.floor(Math.random()*80),18,false,'high');
+      }
+    }
+    for(var px=760,pi=0;px<len-560;px+=prof.pitGap+Math.floor(Math.random()*210),pi++){
+      if(Math.random()<prof.pitChance)addPit(px,pi);
+    }
+    addPlat(286,374,190,20,false,'starter');
+    for(var sx=560,si=0;sx<len-560;sx+=prof.sectionStep+Math.floor(Math.random()*170)-60,si++){
+      addSection(prof.sections[si%prof.sections.length],sx,si);
+    }
+    addPlat(g.exitX-360,392,245,30,true,'exit_shelf');
     if(plats.length)addRopeAt(300,166,FLOOR-10,'starter');
-    for(var rp=0;rp<plats.length&&ropes.length<Math.min(5,2+Math.floor(g.level/2));rp++){
+    for(var rp=0;rp<plats.length&&ropes.length<(prof.ropeTarget||Math.min(5,2+Math.floor(g.level/2)));rp++){
       var plr=plats[(rp*3+g.level)%plats.length],rx=plr.x+Math.max(34,Math.min(plr.w-34,plr.w*(.35+.25*((rp+g.level)%2))));
       var bottom=FLOOR-10;
       for(var lp=0;lp<plats.length;lp++){var low=plats[lp];if(low.y>plr.y+54&&rx>low.x+18&&rx<low.x+low.w-18)bottom=Math.min(bottom,low.y-8);}
       addRopeAt(rx,plr.y-112,bottom,'platform');
     }
-    var firewheels=Math.min(2,Math.floor(g.level/2));
+    var firewheels=prof.firewheels;
     for(var fw=0;fw<firewheels;fw++)addFirewheel(900+fw*(620+Math.random()*180)+g.level*80,fw);
     var types=['rat','slime','bat','skel','cult','archer','knight','wisp'];
-    for(var e=0;e<7+g.level*3;e++){
+    for(var e=0;e<8+g.level*3+(prof.enemyBonus||0);e++){
       var t=types[Math.min(types.length-1,Math.floor(Math.random()*(3+g.level)))];
-      spawnEnemy(t,1040+e*(230+Math.random()*130),false,e);
+      spawnEnemy(t,980+e*(270+Math.random()*150),false,e);
     }
     if(g.level>=g.maxLevel) spawnEnemy('boss',len-360,true,0);
   }
@@ -434,7 +495,7 @@ const updateCode = String.raw`
   for(var pa=0;pa<parts.length;pa++){var pp=parts[pa];pp.x+=pp.vx;pp.y+=pp.vy;pp.vy+=.15;pp.life--;}for(var pp2=parts.length-1;pp2>=0;pp2--)if(parts[pp2].life<=0)parts.splice(pp2,1);
   if(g.exitOpen&&g.worldX+g.wid>g.exitX+18&&g.level<g.maxLevel)beginTransition();
 
-  try{var rootDbg=(typeof window!=='undefined')?window:globalThis;rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),keys:k,left:left,right:right,jump:jump,down:down,dropTimer:g.dropTimer||0,onPlatformIndex:g.onPlatformIndex,onRope:!!g.onRope,ropeIndex:g.ropeIndex||0,ropeGrabCd:g.ropeGrabCd||0,dashTimer:g.dashTimer||0,dashCd:g.dashCd||0,dashDir:g.dashDir||0,lastTapLeft:g.lastTapLeft||0,lastTapRight:g.lastTapRight||0,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,pits:pits.map(function(p){return {x:Math.round(p.x),w:Math.round(p.w)};}),hazards:haz.map(function(h){return h.type==='firewheel'?{type:h.type,cx:Math.round(h.cx),cy:Math.round(h.cy),radius:Math.round(h.radius),count:h.count}:{type:h.type,x:Math.round(h.x),w:Math.round(h.w)};}),ropes:ropes.map(function(r){return {x:Math.round(r.x),y:Math.round(r.y),h:Math.round(r.h),tag:r.tag||''};}),drops:drops.map(function(d){return {kind:d.kind,x:Math.round(d.x),y:Math.round(d.y)};}),platforms:plats.map(function(p){return {x:Math.round(p.x),y:Math.round(p.y),w:Math.round(p.w),large:!!p.large};}),enemies:en.map(function(e){return {type:e.type,move:e.move||'ground',x:Math.round(e.x),y:Math.round(e.y),groundY:Math.round(e.groundY||FLOOR),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen,transitionTimer:g.transitionTimer||0,levelHeal:g.levelHeal||0};}catch(e){}
+  try{var rootDbg=(typeof window!=='undefined')?window:globalThis,dbgProf=levelProfile();rootDbg.__drpDebug={screen:g.screen,frame:g.frame,worldX:Math.round(g.worldX||0),level:g.level||1,profile:dbgProf.label||'',length:levelLength(),keys:k,left:left,right:right,jump:jump,down:down,dropTimer:g.dropTimer||0,onPlatformIndex:g.onPlatformIndex,onRope:!!g.onRope,ropeIndex:g.ropeIndex||0,ropeGrabCd:g.ropeGrabCd||0,dashTimer:g.dashTimer||0,dashCd:g.dashCd||0,dashDir:g.dashDir||0,lastTapLeft:g.lastTapLeft||0,lastTapRight:g.lastTapRight||0,lightAttack:lightAttack,heavyAttack:heavyAttack,lightPressed:lightPressed,heavyPressed:heavyPressed,attack:attack,attackEdge:attackEdge,attackHeavy:attackHeavy,lastAttack:!!(g.last&&g.last.attack),attackEntered:g.attackEntered||0,atkSeq:g.atkSeq||0,atkAnim:g.atkAnim||0,atkTimer:g.atkTimer||0,projectiles:pr.length,pits:pits.map(function(p){return {x:Math.round(p.x),w:Math.round(p.w),tag:p.tag||''};}),hazards:haz.map(function(h){return h.type==='firewheel'?{type:h.type,cx:Math.round(h.cx),cy:Math.round(h.cy),radius:Math.round(h.radius),count:h.count}:{type:h.type,x:Math.round(h.x),w:Math.round(h.w)};}),ropes:ropes.map(function(r){return {x:Math.round(r.x),y:Math.round(r.y),h:Math.round(r.h),tag:r.tag||''};}),drops:drops.map(function(d){return {kind:d.kind,x:Math.round(d.x),y:Math.round(d.y)};}),platforms:plats.map(function(p){return {x:Math.round(p.x),y:Math.round(p.y),w:Math.round(p.w),large:!!p.large,tag:p.tag||''};}),enemies:en.map(function(e){return {type:e.type,move:e.move||'ground',x:Math.round(e.x),y:Math.round(e.y),groundY:Math.round(e.groundY||FLOOR),platform:!!(e.platformW&&e.groundY<FLOOR),hp:Math.round(e.hp),dead:!!e.dead};}),musicStep:g.musicStep||0,musicNotes:g.musicNotes||0,audioReady:!!g.audioReady,audioBlocked:!!g.audioBlocked,exitOpen:!!g.exitOpen,transitionTimer:g.transitionTimer||0,levelHeal:g.levelHeal||0};}catch(e){}
   state.drp=g;state.drpEnemies=en;state.drpProjectiles=pr;state.drpDrops=drops;state.drpParticles=parts;state.drpPlatforms=plats;state.drpHazards=haz;state.drpPits=pits;state.drpRopes=ropes;return state;
 })();
 `;
@@ -553,7 +614,7 @@ writeJson("init.json", {
 writeJson("update.json", {
   id: "glade-dungeon-rogue-update",
   name: "Dungeon Relic Rogue Update",
-  description: "Class combat, climbable ropes, rope jumps, double-tap dash, pits, platforms, XP/stat leveling, boss, and NES synth audio",
+  description: "Class combat, profile-driven longer vertical floors, climbable ropes, dash, pits, XP/stat leveling, boss, and NES synth audio",
   phase: "update",
   code: updateCode.trim()
 });
@@ -567,13 +628,13 @@ writeJson("render.json", {
 });
 
 writeJson("cart.json", {
-  id: "glade-dungeon-relic-rogue-v16",
-  name: "Dungeon Relic Rogue V16",
-  description: "A mobility pass for the NES-flavored roguelike platformer: climbable ropes, rope jump-offs, double-tap dash with cooldown, real pit spans, grounded foes and drops that respect safe surfaces, large semi-solid blocks, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
+  id: "glade-dungeon-relic-rogue-v17",
+  name: "Dungeon Relic Rogue V17",
+  description: "A level-generation pass for the NES-flavored roguelike platformer: longer profile-driven floors with distinct vertical character, stacked/high platform encounters, raised block structures, ropes, pits, hazards, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
   frameRate: 60,
   modules: [
     { moduleId: "glade-dungeon-rogue-init", version: 8 },
-    { moduleId: "glade-dungeon-rogue-update", version: 16 },
+    { moduleId: "glade-dungeon-rogue-update", version: 17 },
     { moduleId: "glade-dungeon-rogue-render", version: 13 }
   ]
 });
