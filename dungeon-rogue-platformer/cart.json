@@ -1,20 +1,20 @@
 {
-  "id": "glade-dungeon-relic-rogue-v14",
-  "name": "Dungeon Relic Rogue V14",
-  "description": "An enemy-behavior pass for the NES-flavored roguelike platformer: flying bats and wisps, grounded foes that respect hazards and platform edges, elevated enemy spawns, classes, relic weapons, drops, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
+  "id": "glade-dungeon-relic-rogue-v15",
+  "name": "Dungeon Relic Rogue V15",
+  "description": "A traversal-rules pass for the NES-flavored roguelike platformer: real pit spans, lowered pit spikes, grounded foes and drops that respect safe surfaces, large semi-solid blocks, drop-through platforms, classes, relic weapons, XP/stat leveling, recovery transitions, and the Obsidian Choir boss.",
   "frameRate": 60,
   "modules": [
     {
       "moduleId": "glade-dungeon-rogue-init",
-      "version": 6
+      "version": 7
     },
     {
       "moduleId": "glade-dungeon-rogue-update",
-      "version": 14
+      "version": 15
     },
     {
       "moduleId": "glade-dungeon-rogue-render",
-      "version": 11
+      "version": 12
     }
   ]
 }
